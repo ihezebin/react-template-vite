@@ -1,0 +1,16 @@
+/public
+
+# dependencies
+node_modules
+# production
+dist
+build
+
+.vscode
+
+.idea
+
+.eslintrc.js
+
+src/setupProxy.js
+
