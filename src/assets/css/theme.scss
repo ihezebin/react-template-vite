@@ -1,0 +1,38 @@
+@import "variable";
+
+@mixin default {
+  --font-family: #{$font-family};
+  --font-size: #{$font-size-14};
+  --text-color: #{$title-color};
+  --background-color: #{$background-color-lightgray};
+
+  --subtitle-color: #{$subtitle-color};
+
+  --link-hover-color: #{$link-hover-color-blue};
+  --link-hover-color-another: #{$link-hover-color-green};
+
+  --scrollbar-color: #{$scrollbar-color};
+  --scrollbar-hover-color: #{$scrollbar-hover-color};
+
+  --footer-text-color: rgba(88, 101, 119, 0.7);
+}
+
+@mixin theme-dark {
+  --text-color: #{$title-color-reverse};
+  --background-color: #{$background-color-lightgray-reverse};
+
+  --subtitle-color: #{$subtitle-color-reverse};
+
+  --scrollbar-color: #{$scrollbar-color-reverse};
+  --scrollbar-hover-color: #{$scrollbar-hover-color-reverse};
+
+  --footer-text-color: #{$text-color-reverse-lighter};
+}
+
+html[theme="dark"] {
+  @include theme-dark
+}
+
+:root {
+  @include default
+}
