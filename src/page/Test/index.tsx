@@ -56,7 +56,7 @@ const Test = () => {
         <Button
           onClick={() => {
             api
-              .get('/hello')
+              .get('/hello_401')
               .then((res) => {
                 console.log('resp', res)
               })

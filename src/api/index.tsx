@@ -1,5 +1,5 @@
-import {getLocalItem, KEY_TOKEN, newApi, setLocalItem} from '@hezebin/doraemon'
-import {message, notification} from 'antd'
+import { getLocalItem, KEY_TOKEN, newApi, setLocalItem } from '@hezebin/doraemon'
+import { message, notification } from 'antd'
 
 const baseURL = '/api'
 const timeout = import.meta.env.PROD ? 10000 : 0
@@ -16,23 +16,22 @@ export const api = newApi({
     }
     return res
   },
-  onError: (err) => {
-    if (err.status) {
-      // 有响应错误处理
-      if (err.status === 401) {
-        setLocalItem(KEY_TOKEN)
-      } else {
-        message.error(err?.message).then()
-      }
+  onError: (res) => {
+    console.log('onError')
+    if (res.status === 401) {
+      setLocalItem(KEY_TOKEN)
     } else {
-      // 无响应错误处理
-      notification.error({
-        message: err.message,
-        description: (
-          <span style={{ color: 'gray', fontSize: '13px' }}>{`错误码: ${err.code}`}</span>
-        ),
-      })
+      message.error(res?.message).then()
     }
+    return res
+  },
+  onAbnormal: (err, code, message) => {
+    console.error('onAbnormal')
+    // 无响应错误处理
+    notification.error({
+      message: message,
+      description: <span style={{ color: 'gray', fontSize: '13px' }}>{`错误码: ${code}`}</span>,
+    })
     return err
   },
 })
