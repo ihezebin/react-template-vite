@@ -1,7 +1,7 @@
 import { ApiOutlined, AppstoreAddOutlined, KeyOutlined } from '@ant-design/icons'
-import type { LayoutMenuConfig } from '@hezebin/doraemon'
+import type { LayoutMenuItem } from '@hezebin/doraemon'
 
-export const menuConfig: LayoutMenuConfig = [
+export const menuConfig: LayoutMenuItem[] = [
   { icon: <ApiOutlined />, key: 'api', label: 'API' },
   { icon: <KeyOutlined />, key: 'token', label: 'usingToken' },
   {
