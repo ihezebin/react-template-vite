@@ -21,7 +21,17 @@ export const api = newApi({
     if (res.status === 401) {
       setLocalItem(KEY_TOKEN)
     } else {
-      message.error(res?.message).then()
+      if (res?.message) {
+        message.error(res.message).then()
+      } else {
+        const resp = res.response
+        notification.error({
+          message: resp?.data,
+          description: (
+            <span style={{ color: 'gray', fontSize: '13px' }}>{`错误码: ${resp?.status}`}</span>
+          ),
+        })
+      }
     }
     return res
   },
