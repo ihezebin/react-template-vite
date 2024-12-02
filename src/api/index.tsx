@@ -26,7 +26,7 @@ export const api = newApi({
       } else {
         const resp = res.response
         notification.error({
-          message: resp?.data,
+          message: resp?.statusText,
           description: (
             <span style={{ color: 'gray', fontSize: '13px' }}>{`错误码: ${resp?.status}`}</span>
           ),
