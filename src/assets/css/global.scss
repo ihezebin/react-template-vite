@@ -1,4 +1,4 @@
-@import "theme";
+@use "theme" as *;
 
 html, body {
   margin: 0;
@@ -37,4 +37,26 @@ html, body {
 }
 
 #root {
+}
+
+#loading {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    width: 200px;
+    animation: rotation 1.2s infinite linear;
+
+    @keyframes rotation {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(-360deg);
+      }
+    }
+  }
 }

@@ -400,10 +400,10 @@
   resolved "https://registry.npmjs.org/@eslint/js/-/js-9.13.0.tgz#c5f89bcd57eb54d5d4fa8b77693e9c28dc97e547"
   integrity sha512-IFLyoY4d72Z5y/6o/BazFBezupzI/taV8sGumxTAVw3lXG9A6md1Dc34T9s1FoD/an9pJH8RHbAxsaEbBed9lA==
 
-"@hezebin/doraemon@^1.3.3":
-  version "1.3.3"
-  resolved "https://registry.npmjs.org/@hezebin/doraemon/-/doraemon-1.3.3.tgz#b065f16101b88b6204b45f7519cf08314fbf5b93"
-  integrity sha512-Olk/m2dO1KX4MeRQNfJeBi5vGDYpb8LZGMbFyU5NVO/IaEf+neZ/incXbhWbRsuxKBqbrBBLhV8GXtqNySpk9g==
+"@hezebin/doraemon@^1.3.4":
+  version "1.3.4"
+  resolved "https://registry.npmjs.org/@hezebin/doraemon/-/doraemon-1.3.4.tgz#16cd26e3f7195f0a33bfdc982642b1fa7dd51e66"
+  integrity sha512-kjXdjVjQNmCW/8KdX9P6dbUJLvasf44xDFNECkZPxnPRVD+IxPL47hm8IZSN5Y/ZiqCR1UtG3x8QBBWhV8EaFw==
   dependencies:
     "@ant-design/icons" "^5.5.1"
     "@babel/runtime" "^7.25.6"

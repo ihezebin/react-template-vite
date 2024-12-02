@@ -1,9 +1,11 @@
-import {createRoot} from 'react-dom/client'
-import Router from "./router";
-import {BrowserRouter} from 'react-router-dom'
-import {ConfigProvider, message} from 'antd'
+import { lazy, Suspense } from 'react'
+import { BrowserRouter } from 'react-router-dom'
+import { createRoot } from 'react-dom/client'
+import { ConfigProvider, message } from 'antd'
 import zhCN from 'antd/locale/zh_CN'
+
 import './assets/css/global.scss'
+import Loading from './assets/images/loading.png'
 
 const content = `
  _                      _     _
@@ -16,14 +18,22 @@ const content = `
 console.log(content)
 
 message.config({
-    maxCount: 1,
+  maxCount: 1,
 })
 
+const LazyComponent = lazy(() => import('./router'))
 
 createRoot(document.getElementById('root')!).render(
-    <ConfigProvider locale={zhCN}>
-        <BrowserRouter>
-            <Router/>
-        </BrowserRouter>
-    </ConfigProvider>,
+  <ConfigProvider locale={zhCN}>
+    <BrowserRouter>
+      <Suspense
+        fallback={
+          <div id={'loading'}>
+            <img src={Loading} alt="loading" />
+          </div>
+        }>
+        <LazyComponent />
+      </Suspense>
+    </BrowserRouter>
+  </ConfigProvider>,
 )

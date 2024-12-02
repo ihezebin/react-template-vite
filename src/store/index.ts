@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { mountStoreDevtool } from 'simple-zustand-devtools'
-import { ENV_DEV, getLocalItem, KEY_TOKEN, setLocalItem } from '@hezebin/doraemon'
+import { getLocalItem, KEY_TOKEN, setLocalItem } from '@hezebin/doraemon'
 
 import { IUser } from '../model'
 
@@ -62,6 +62,6 @@ export const unsubscribeStore = useStore.subscribe((state: IStore) => {
   }
 })
 
-if (process.env.NODE_ENV === ENV_DEV) {
+if (import.meta.env.DEV) {
   mountStoreDevtool('Store', useStore)
 }
