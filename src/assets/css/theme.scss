@@ -16,6 +16,7 @@
   --scrollbar-hover-color: #{$scrollbar-hover-color};
 
   --footer-text-color: rgba(88, 101, 119, 0.7);
+  --btn-disabled-color: rgba(0, 0, 0, 0.25);
 }
 
 @mixin theme-dark {
@@ -29,6 +30,7 @@
   --scrollbar-hover-color: #{$scrollbar-hover-color-reverse};
 
   --footer-text-color: #{$text-color-reverse-lighter};
+  --btn-disabled-color: #6e6e6e;
 
   :global(.ant-btn-disabled), :global(:disabled) {
     color: #6e6e6e;
