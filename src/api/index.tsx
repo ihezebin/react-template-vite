@@ -11,7 +11,7 @@ export const api = newApi({
     return getLocalItem(KEY_TOKEN)
   },
   onResponse: (res) => {
-    if (res?.code !== 0 && res?.code !== 11) {
+    if (res?.code !== 0 && res?.code !== 1) {
       message.error(res?.message).then()
     }
     return res

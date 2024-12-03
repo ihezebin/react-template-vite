@@ -27,6 +27,10 @@
   --scrollbar-hover-color: #{$scrollbar-hover-color-reverse};
 
   --footer-text-color: #{$text-color-reverse-lighter};
+
+  :global(.ant-btn-disabled), :global(:disabled) {
+    color: #6e6e6e;
+  }
 }
 
 html[theme="dark"] {
