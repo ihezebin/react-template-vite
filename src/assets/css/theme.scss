@@ -5,6 +5,7 @@
   --font-size: #{$font-size-14};
   --text-color: #{$title-color};
   --background-color: #{$background-color-lightgray};
+  --content-background-color: #{$background-color-white};
 
   --subtitle-color: #{$subtitle-color};
 
@@ -19,7 +20,8 @@
 
 @mixin theme-dark {
   --text-color: #{$title-color-reverse};
-  --background-color: #{$background-color-lightgray-reverse};
+  --background-color: #252d38;
+  --content-background-color: #202325;
 
   --subtitle-color: #{$subtitle-color-reverse};
 

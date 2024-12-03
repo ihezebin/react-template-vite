@@ -10,7 +10,7 @@ html, body {
   z-index: 0;
 
   * {
-    font-family: var(--font-family);
+    font-family: var(--font-family) !important;
     box-sizing: border-box;
   }
 
