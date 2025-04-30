@@ -66,5 +66,11 @@ export default tseslint.config(
       },
     },
   },
+  {
+    files: ['**/*.d.ts'],
+    rules: {
+      'unused-imports/no-unused-imports': 'off',
+    },
+  },
   prettierConfig,
 );
