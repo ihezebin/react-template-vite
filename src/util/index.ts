@@ -12,7 +12,9 @@ export const getDocumentTitle = (): string => {
 }
 
 export const handleUnAuthorized = (fn?: () => void) => {
-  fn && fn()
+  if (fn) {
+    fn()
+  }
   setLocalItem(KEY_TOKEN)
   document.location.href =
     'https://' + HEZEBIN_DOMAIN_HEZEBIN_SSO_LOGIN + '?callback=' + document.location.href
