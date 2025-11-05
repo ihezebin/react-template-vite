@@ -1,13 +1,13 @@
-import {useEffect, useState} from 'react'
-import {useNavigate, useRoutes} from 'react-router-dom'
-import {KEY_TOKEN} from '@hezebin/doraemon'
-import {message, Spin} from 'antd'
+import { useEffect, useState } from 'react'
+import { useNavigate, useRoutes } from 'react-router-dom'
+import { KEY_TOKEN } from '@hezebin/doraemon'
+import { message, Spin } from 'antd'
 
-import {unsubscribeStore, useStore} from '../store'
-import {handleUnAuthorized} from '../util'
-import {api} from '../api'
+import { unsubscribeStore, useStore } from '../store'
+import { handleUnAuthorized } from '../util'
+import { api } from '../api'
 
-import {routes} from './routes'
+import { routes } from './routes'
 
 // https://reactrouter.com/en/6.21.1/route/route#index
 const Router = () => {
@@ -18,19 +18,26 @@ const Router = () => {
   useEffect(() => {
     // 如果当前地址后面带了 token query 参数，则将 token 写到本地
     if (location.search) {
-      const newToken = new URLSearchParams(location.search).get(KEY_TOKEN)
+      const searchParams = new URLSearchParams(location.search)
+      const newToken = searchParams.get(KEY_TOKEN)
       if (newToken) {
         console.log(newToken)
         setToken(newToken)
-        navigate(location.pathname + location.hash)
+        // 保留其他 query 参数，仅去除 token
+        searchParams.delete(KEY_TOKEN)
+        const newSearch = searchParams.toString()
+        navigate(location.pathname + (newSearch ? '?' + newSearch : '') + location.hash)
         return
       }
     }
+  }, [])
 
+  useEffect(() => {
     if (token) {
       api
         .get('/user/check_token', { token })
         .then(({ code, message: msg, data, status }) => {
+          console.log(code, msg, data, status)
           if (status == 401) {
             clearUser()
             message.error(msg).then(() => handleUnAuthorized())
