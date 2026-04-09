@@ -4,14 +4,14 @@ import { useEffect, useMemo, useState } from 'react'
 import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons'
 import { Switch } from 'antd'
 
-import { useStore } from '../store'
-import Logo from '../assets/logo/logo.png'
+import { useStore } from '../../store'
+import Logo from '../../assets/logo/logo.png'
 
 import style from './index.module.scss'
 import { menuConfig } from './menu.config'
 
 // const { AnimateCss } = Animate
-const GlobalLayout = () => {
+const LoggedLayout = () => {
   const [collapsed, setCollapsed] = useState<boolean>(false)
   const navigate = useNavigate()
   const { themeDark, setThemeDark } = useStore()
@@ -70,4 +70,4 @@ const GlobalLayout = () => {
   )
 }
 
-export default GlobalLayout
+export default LoggedLayout

@@ -1,4 +1,4 @@
-import { HEZEBIN_DOMAIN_HEZEBIN_SSO_LOGIN, KEY_TOKEN, setLocalItem } from '@hezebin/doraemon'
+import { getLocalItem, HEZEBIN_DOMAIN_HEZEBIN_SSO_LOGIN, KEY_TOKEN, setLocalItem } from '@hezebin/doraemon'
 
 const TITLE_KEY = 'title'
 export const setDocumentTitle = (subtitle?: string) => {
@@ -8,12 +8,16 @@ export const setDocumentTitle = (subtitle?: string) => {
 }
 
 export const getDocumentTitle = (): string => {
-  return localStorage.getItem(TITLE_KEY) || '河泽冰'
+  return getLocalItem(TITLE_KEY) || '河泽冰'
 }
 
-export const handleUnAuthorized = (fn?: () => void) => {
+export const handleUnAuthorized = (fn?: (() => void) | (() => void)[]) => {
   if (fn) {
-    fn()
+    if (Array.isArray(fn)) {
+      fn.forEach((f) => f())
+    } else {
+      fn()
+    }
   }
   setLocalItem(KEY_TOKEN)
   document.location.href =

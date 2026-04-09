@@ -1,6 +1,8 @@
 # react-template-vite
 React TypeScript 的模板项目，包含了常用的组件、工具、配置等。
 
+基于 Vite 构建：https://cn.vitejs.dev/
+
 ## 快速创建项目
 
 ```bash

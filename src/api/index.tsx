@@ -22,7 +22,7 @@ export const api = newApi({
       setLocalItem(KEY_TOKEN)
     } else {
       if (res?.message) {
-        message.error(res.message).then()
+        message.error(res.message)
       } else {
         const resp = res.response
         notification.error({

@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { mountStoreDevtool } from 'simple-zustand-devtools'
 import { getLocalItem, KEY_TOKEN, setLocalItem } from '@hezebin/doraemon'
 
-import { IUser } from '../model'
+import type { IUser } from '../model'
 
 interface IStore {
   themeDark: boolean
