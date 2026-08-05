@@ -1,29 +1,31 @@
-import { ApiOutlined, AppstoreAddOutlined, KeyOutlined } from '@ant-design/icons'
-import type { LayoutMenuItem } from '@hezebin/doraemon'
+import {
+  ApiOutlined,
+  AppstoreAddOutlined,
+  HomeOutlined,
+  LoadingOutlined,
+  ThunderboltOutlined,
+} from '@ant-design/icons'
+import type { ReactNode } from 'react'
+
+export type LayoutMenuItem = {
+  key: string
+  label: string
+  icon?: ReactNode
+  children?: LayoutMenuItem[]
+}
 
 export const menuConfig: LayoutMenuItem[] = [
-  { icon: <ApiOutlined />, key: 'api', label: 'API' },
-  { icon: <KeyOutlined />, key: 'token', label: 'usingToken' },
   {
     icon: <AppstoreAddOutlined />,
-    key: 'component',
-    label: '组件',
+    key: 'example',
+    label: '示例',
     children: [
-      { key: 'test', label: 'Test' },
-      { key: 'captcha_input', label: 'CaptchaInput 验证码' },
-      { key: 'icon', label: 'Icon 图标' },
-      { key: 'layout', label: 'Layout 布局' },
-      { key: 'animate', label: 'Animate 动画效果' },
-      { key: 'upload', label: 'Upload 文件上传' },
-      // { key: 'code_preview', label: 'CodePreView 代码预览' },
-      { key: 'typewriter', label: 'Typewriter 打字机' },
-      { key: 'tag_cloud', label: 'TagCloud 标签云' },
+      { icon: <HomeOutlined />, key: 'home_animation', label: '首页动画' },
+      { icon: <ThunderboltOutlined />, key: 'build_animation', label: '构建动画' },
+      { icon: <LoadingOutlined />, key: 'page_loading', label: '懒加载动画' },
     ],
   },
-  {
-    icon: <AppstoreAddOutlined />,
-    key: 'hook',
-    label: 'Hook',
-    children: [{ key: 'use_obj_state', label: 'useObjState' }],
-  },
+  { icon: <ApiOutlined />, key: 'test/1', label: 'TEST' },
+  { icon: <ApiOutlined />, key: 'nothing', label: '404页面' },
+  { icon: <ApiOutlined />, key: 'forbidden', label: '403页面' },
 ]

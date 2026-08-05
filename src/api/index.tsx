@@ -1,5 +1,5 @@
 import { getLocalItem, KEY_TOKEN, newApi, setLocalItem } from '@hezebin/doraemon'
-import { message, notification } from 'antd'
+import { notification } from 'antd'
 
 const baseURL = '/api'
 const timeout = import.meta.env.PROD ? 10000 : 0
@@ -12,7 +12,10 @@ export const api = newApi({
   },
   onResponse: (res) => {
     if (res?.code !== 0 && res?.code !== 1) {
-      message.error(res?.message).then()
+      notification.error({
+        message: '请求失败',
+        description: res?.message || '未知错误',
+      })
     }
     return res
   },
@@ -20,27 +23,25 @@ export const api = newApi({
     console.log('onError')
     if (res.status === 401) {
       setLocalItem(KEY_TOKEN)
+    } else if (res?.message) {
+      notification.error({
+        message: '请求失败',
+        description: res.message,
+      })
     } else {
-      if (res?.message) {
-        message.error(res.message)
-      } else {
-        const resp = res.response
-        notification.error({
-          message: resp?.statusText,
-          description: (
-            <span style={{ color: 'gray', fontSize: '13px' }}>{`错误码: ${resp?.status}`}</span>
-          ),
-        })
-      }
+      const resp = res.response
+      notification.error({
+        message: resp?.statusText || '请求失败',
+        description: `错误码: ${resp?.status ?? '—'}`,
+      })
     }
     return res
   },
-  onAbnormal: (err, code, message) => {
+  onAbnormal: (err, code, msg) => {
     console.error('onAbnormal')
-    // 无响应错误处理
     notification.error({
-      message: message,
-      description: <span style={{ color: 'gray', fontSize: '13px' }}>{`错误码: ${code}`}</span>,
+      message: msg || '网络异常',
+      description: `错误码: ${code}`,
     })
     return err
   },

@@ -1,72 +1,37 @@
-import { getLocalItem, KEY_TOKEN, Layout } from '@hezebin/doraemon'
-import { Outlet, useNavigate } from 'react-router-dom'
-import { useEffect, useMemo, useState } from 'react'
-import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons'
-import { Switch } from 'antd'
+import classNames from 'classnames'
+import { useState, type CSSProperties } from 'react'
+import { Outlet } from 'react-router-dom'
 
+import { AmbientBg } from '../../components/AmbientBg'
 import { useStore } from '../../store'
-import Logo from '../../assets/logo/logo.png'
+import { Sidebar } from './Sidebar'
+import { SidebarExpandFab } from './SidebarExpandFab'
+import { loadSidebarWidth, SidebarResizeHandle } from './SidebarResizeHandle'
+import styles from './styles.module.scss'
 
-import style from './index.module.scss'
-import { menuConfig } from './menu.config'
-
-// const { AnimateCss } = Animate
 const LoggedLayout = () => {
-  const [collapsed, setCollapsed] = useState<boolean>(false)
-  const navigate = useNavigate()
-  const { themeDark, setThemeDark } = useStore()
-
-  useEffect(() => {
-    console.log(getLocalItem(KEY_TOKEN))
-  }, [])
-
-  const handleMenuClick = (keys: string[]) => {
-    const path = ('/' + keys.reverse().join('/')).replace('//', '/')
-    navigate(path)
-  }
+  const sidebarCollapsed = useStore((s) => s.sidebarCollapsed)
+  const setSidebarCollapsed = useStore((s) => s.setSidebarCollapsed)
+  const [sidebarWidth, setSidebarWidth] = useState(() => loadSidebarWidth())
 
   return (
-    <Layout
-      dark={themeDark}
-      height={'100vh'}
-      collapsed={collapsed}
-      onCollapsedChange={setCollapsed}
-      brand={
-        <div className={style.brand} onClick={() => navigate('/')}>
-          <img src={Logo} alt="logo" />
-          React-Template-Ts
+    <div
+      className={classNames(styles.appShell, sidebarCollapsed && styles.sidebarCollapsed)}
+      style={{ '--sidebar-width': `${sidebarWidth}px` } as CSSProperties}>
+      {!sidebarCollapsed && (
+        <>
+          <Sidebar />
+          <SidebarResizeHandle width={sidebarWidth} onWidthChange={setSidebarWidth} />
+        </>
+      )}
+      <main className={styles.main}>
+        <AmbientBg variant="main" />
+        <div className={styles.mainContent}>
+          <Outlet />
         </div>
-      }
-      header={
-        <div className={style.header}>
-          <div onClick={() => setCollapsed(!collapsed)}>
-            {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-          </div>
-          <Switch
-            checkedChildren="🌛"
-            unCheckedChildren="🔆"
-            checked={themeDark}
-            onClick={() => setThemeDark(!themeDark)}
-          />
-        </div>
-      }
-      footer={
-        <div
-          style={{
-            height: '48px',
-            lineHeight: '48px',
-            textAlign: 'center',
-            color: '#adadad',
-            fontWeight: 'lighter',
-          }}>
-          @copyright Doraemon
-        </div>
-      }
-      onClick={handleMenuClick}
-      selectedKeys={location?.pathname.split('/').reverse()}
-      menu={useMemo(() => menuConfig, [])}>
-      <Outlet />
-    </Layout>
+      </main>
+      {sidebarCollapsed && <SidebarExpandFab onExpand={() => setSidebarCollapsed(false)} />}
+    </div>
   )
 }
 

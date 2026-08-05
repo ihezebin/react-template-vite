@@ -1,4 +1,4 @@
-import { getLocalItem, HEZEBIN_DOMAIN_HEZEBIN_SSO_LOGIN, KEY_TOKEN, setLocalItem } from '@hezebin/doraemon'
+import { getLocalItem, KEY_TOKEN, setLocalItem } from '@hezebin/doraemon'
 
 const TITLE_KEY = 'title'
 export const setDocumentTitle = (subtitle?: string) => {
@@ -20,6 +20,5 @@ export const handleUnAuthorized = (fn?: (() => void) | (() => void)[]) => {
     }
   }
   setLocalItem(KEY_TOKEN)
-  document.location.href =
-    'https://' + HEZEBIN_DOMAIN_HEZEBIN_SSO_LOGIN + '?callback=' + document.location.href
+  document.location.href = '/login'
 }

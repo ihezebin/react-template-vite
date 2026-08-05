@@ -1,7 +1,7 @@
 import { BrowserRouter } from 'react-router-dom'
 import { lazy, Suspense, useEffect } from 'react'
 
-import Loading from '../assets/images/loading.png'
+import PageLoading from '../components/PageLoading'
 import { unsubscribeStore } from '../store'
 
 const LazyComponent = lazy(() => import('./Router'))
@@ -15,12 +15,7 @@ const LazyRouter = () => {
 
   return (
     <BrowserRouter>
-      <Suspense
-        fallback={
-          <div id={'loading'}>
-            <img src={Loading} alt="loading" />
-          </div>
-        }>
+      <Suspense fallback={<PageLoading fullscreen />}>
         <LazyComponent />
       </Suspense>
     </BrowserRouter>
