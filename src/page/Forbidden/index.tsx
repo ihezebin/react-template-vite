@@ -4,7 +4,6 @@ import classNames from 'classnames'
 import { useNavigate } from 'react-router-dom'
 
 import { AmbientBg } from '../../components/AmbientBg'
-
 import styles from '../Nothing/index.module.scss'
 
 const Forbidden = () => {

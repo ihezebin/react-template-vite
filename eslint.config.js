@@ -58,4 +58,10 @@ export default defineConfig([
     },
   },
   prettierConfig,
+  {
+    files: ['src/main.tsx'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
 ])

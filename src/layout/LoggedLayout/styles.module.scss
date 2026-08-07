@@ -1,5 +1,6 @@
 .appShell {
   --sidebar-width: 288px;
+  --sidebar-collapsed-width: 72px;
   display: grid;
   /* 中间列不占视觉宽度，拖拽条叠在接缝上，避免粗分割线 */
   grid-template-columns: var(--sidebar-width) 0 1fr;
@@ -10,10 +11,11 @@
   overflow: hidden;
   background: var(--app-shell-bg);
   position: relative;
+  transition: grid-template-columns 0.22s cubic-bezier(0.2, 0, 0, 1);
 }
 
 .appShell.sidebarCollapsed {
-  grid-template-columns: 1fr;
+  grid-template-columns: var(--sidebar-collapsed-width) 1fr;
 }
 
 .sidebar {
@@ -139,6 +141,10 @@
   min-height: 32px;
 }
 
+.sidebarIsCollapsed .sidebarBrand {
+  justify-content: center;
+}
+
 .sidebarBrandLeft {
   display: flex;
   align-items: center;
@@ -153,6 +159,11 @@
   text-align: left;
   color: inherit;
   transition: background 0.15s ease;
+}
+
+.sidebarIsCollapsed .sidebarBrandLeft {
+  padding: 4px;
+  justify-content: center;
 }
 
 .sidebarBrandLeft:hover {
@@ -225,7 +236,8 @@
   animation: sidebarCollapseIconNudge 0.9s ease-in-out infinite;
 }
 
-.sidebarCollapseBtn:global(.ant-btn):active {
+.sidebarCollapseBtn:global(.ant-btn):active,
+.sidebarExpandBtn:global(.ant-btn):active {
   transform: scale(1.02);
   box-shadow: 0 2px 8px var(--app-shadow-accent);
 }
@@ -240,135 +252,50 @@
   }
 }
 
-.sidebarExpandFabWrap {
-  position: fixed;
-  z-index: 1000;
-  touch-action: none;
-  cursor: grab;
-  user-select: none;
-  width: 44px;
-  height: 44px;
-}
-
-.sidebarExpandFabWrap::before {
-  content: '';
-  position: absolute;
-  inset: -4px;
+.sidebarExpandBtn:global(.ant-btn) {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  padding: 0;
   border-radius: 50%;
-  background: radial-gradient(circle, var(--app-shadow-accent), transparent 68%);
-  opacity: 0;
-  transform: scale(0.85);
-  transition:
-    opacity 0.25s ease,
-    transform 0.25s ease;
-  pointer-events: none;
-}
-
-.sidebarExpandFabWrap .sidebarExpandFab:global(.ant-btn) {
-  width: 44px !important;
-  height: 44px !important;
-  min-width: 44px !important;
   border: 1px solid transparent;
   color: var(--app-accent);
   background:
     var(--app-btn-fill) padding-box,
     var(--app-grad-bar) border-box;
-  box-shadow:
-    0 2px 8px var(--app-shadow-accent),
-    0 6px 16px rgba(15, 23, 42, 0.06);
-  pointer-events: none;
-  animation: sidebarFabBreathe 2.4s ease-in-out infinite;
+  box-shadow: 0 2px 8px var(--app-shadow-accent);
   transition:
+    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 0.22s ease,
     color 0.22s ease,
     background 0.22s ease;
 }
 
-@keyframes sidebarFabBreathe {
-  0%,
-  100% {
-    transform: scale(1);
-    box-shadow:
-      0 2px 8px var(--app-shadow-accent),
-      0 6px 16px rgba(15, 23, 42, 0.06);
-  }
-  50% {
-    transform: scale(1.1);
-    box-shadow:
-      0 4px 14px var(--app-shadow-accent),
-      0 8px 20px rgba(15, 23, 42, 0.08);
-  }
-}
-
-.sidebarExpandFabWrap .sidebarExpandFab :global(.anticon) {
-  font-size: 18px;
+.sidebarExpandBtn:global(.ant-btn) :global(.anticon) {
+  font-size: 15px;
   transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.sidebarExpandFabWrap:hover::before {
-  opacity: 1;
-  transform: scale(1.08);
-  animation: sidebarFabHalo 1.4s ease-in-out infinite;
-}
-
-.sidebarExpandFabWrap:hover .sidebarExpandFab:global(.ant-btn) {
-  color: var(--app-accent);
-  animation: none;
-  transform: scale(1.08);
+.sidebarExpandBtn:global(.ant-btn):hover,
+.sidebarExpandBtn:global(.ant-btn):focus {
+  color: var(--app-accent) !important;
   background:
     var(--app-btn-fill-hover) padding-box,
-    var(--app-grad-bar) border-box;
+    var(--app-grad-bar) border-box !important;
   box-shadow:
-    0 6px 18px var(--app-shadow-accent),
-    0 0 0 4px var(--app-shadow-accent);
+    0 4px 12px var(--app-shadow-accent),
+    0 0 0 3px var(--app-shadow-accent);
+  transform: scale(1.06);
 }
 
-.sidebarExpandFabWrap:hover .sidebarExpandFab :global(.anticon) {
+.sidebarExpandBtn:global(.ant-btn):hover :global(.anticon),
+.sidebarExpandBtn:global(.ant-btn):focus :global(.anticon) {
   transform: translateX(2px);
-  animation: sidebarFabIconNudge 0.9s ease-in-out infinite;
+  animation: sidebarExpandIconNudge 0.9s ease-in-out infinite;
 }
 
-:global(body.is-fab-dragging),
-:global(body.is-fab-dragging) * {
-  cursor: grabbing !important;
-  user-select: none !important;
-}
-
-:global(body.is-fab-dragging) .sidebarExpandFabWrap::before,
-:global(body.is-fab-dragging) .sidebarExpandFabWrap:hover::before {
-  opacity: 0.55;
-  animation: none;
-  transform: scale(1.05);
-}
-
-:global(body.is-fab-dragging) .sidebarExpandFabWrap .sidebarExpandFab:global(.ant-btn),
-:global(body.is-fab-dragging) .sidebarExpandFabWrap:hover .sidebarExpandFab:global(.ant-btn) {
-  animation: none;
-  transform: scale(1.04);
-}
-
-:global(body.is-fab-dragging) .sidebarExpandFabWrap .sidebarExpandFab :global(.anticon) {
-  animation: none;
-  transform: none;
-}
-
-.sidebarExpandFabWrap:active {
-  cursor: grabbing;
-}
-
-@keyframes sidebarFabHalo {
-  0%,
-  100% {
-    opacity: 0.55;
-    transform: scale(1.02);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.14);
-  }
-}
-
-@keyframes sidebarFabIconNudge {
+@keyframes sidebarExpandIconNudge {
   0%,
   100% {
     transform: translateX(0);
@@ -382,6 +309,17 @@
   border-bottom: none;
   border-top: 1px solid var(--app-line);
   margin-top: auto;
+}
+
+.sidebarFooterStack {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.sidebarIsCollapsed .sidebarFooterStack {
+  align-items: center;
 }
 
 .sidebarCopyright {
@@ -410,7 +348,22 @@
     background 0.2s ease,
     border-color 0.2s ease,
     box-shadow 0.2s ease,
-    transform 0.2s ease;
+    transform 0.2s ease,
+    padding 0.2s ease,
+    border-radius 0.2s ease;
+}
+
+.sidebarIsCollapsed .sidebarUserBtn {
+  width: auto;
+  justify-content: center;
+  gap: 0;
+  padding: 4px;
+  border-radius: 50%;
+}
+
+.sidebarIsCollapsed .sidebarUserMeta,
+.sidebarIsCollapsed .sidebarUserCaret {
+  display: none;
 }
 
 .sidebarUserBtn:hover,
@@ -470,6 +423,18 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  transition: padding 0.22s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.sidebarIsCollapsed .sidebarHeader,
+.sidebarIsCollapsed .sidebarFooter {
+  padding: 12px 8px;
+}
+
+.sidebarIsCollapsed .sidebarBody {
+  align-items: center;
+  padding: 10px 8px 16px;
+  gap: 6px;
 }
 
 .sidebarSectionLabel {
@@ -497,17 +462,81 @@
 }
 
 .sidebarMenuGroupTrigger.isActiveGroup {
-  border-color: var(--app-line-strong);
-  color: var(--app-ink);
-  background: var(--app-nav-bg);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  background: var(--app-nav-active);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 6px 16px var(--app-shadow-accent);
+}
+
+.sidebarMenuGroupTrigger.isActiveGroup .settingsNavIcon,
+.sidebarMenuGroupTrigger.isActiveGroup .sidebarMenuGroupArrow {
+  color: #fff;
+}
+
+.sidebarMenuGroupTrigger.isActiveGroup:hover {
+  background: var(--app-grad-primary);
+  color: #fff;
+  box-shadow: 0 8px 20px var(--app-shadow-accent);
+  transform: none;
+}
+
+.sidebarMenuGroupTrigger.isActiveGroup:hover .settingsNavIcon {
+  color: #fff;
+  transform: none;
+}
+
+.sidebarIsCollapsed .settingsNavItem.isActiveGroup:hover::before {
+  display: none;
 }
 
 .sidebarMenuGroupChildren {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding-left: 10px;
+  padding-left: 20px;
+}
+
+.sidebarMenuGroupChildrenFlat {
+  padding-left: 0;
+}
+
+.sidebarSubmenuPopover {
+  z-index: 1100;
+  --antd-arrow-background-color: var(--app-panel-bg);
+}
+
+.sidebarSubmenuPopover :global(.ant-popover-inner) {
+  padding: 10px;
+  border-radius: 14px;
+  border: 1px solid var(--app-line);
+  background: var(--app-panel-bg);
+  box-shadow: var(--app-card-shadow);
+  backdrop-filter: blur(12px);
+}
+
+.sidebarSubmenuPopover :global(.ant-popover-arrow::before) {
+  border: 1px solid var(--app-line);
+}
+
+.sidebarSubmenuPanel {
+  width: 188px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebarSubmenuTitle {
+  padding: 2px 4px 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--app-faint);
+}
+
+.sidebarIsCollapsed .settingsNavItem.isPopupOpen:not(.isActiveGroup) {
+  border-color: var(--app-line-strong);
+  background: var(--app-nav-hover);
+  box-shadow: var(--app-nav-hover-shadow);
 }
 
 .settingsNavItem {
@@ -533,7 +562,33 @@
     border-color 0.2s ease,
     color 0.2s ease,
     box-shadow 0.2s ease,
-    transform 0.2s ease;
+    transform 0.2s ease,
+    width 0.22s cubic-bezier(0.2, 0, 0, 1),
+    padding 0.22s cubic-bezier(0.2, 0, 0, 1),
+    border-radius 0.22s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.sidebarIsCollapsed .settingsNavItem {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  justify-content: center;
+  gap: 0;
+  border-radius: 12px;
+}
+
+.sidebarIsCollapsed .settingsNavLabel,
+.sidebarIsCollapsed .sidebarMenuGroupArrow {
+  display: none;
+}
+
+.sidebarIsCollapsed .settingsNavItem:hover {
+  transform: none;
+}
+
+.sidebarIsCollapsed .settingsNavItem:hover::before,
+.sidebarIsCollapsed .settingsNavItem.active::before {
+  display: none;
 }
 
 .settingsNavLabel {

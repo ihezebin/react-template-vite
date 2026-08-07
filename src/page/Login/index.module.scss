@@ -135,7 +135,7 @@
   background: var(--app-btn-fill-hover);
   border: 1px solid var(--app-line-strong);
   box-shadow: 0 8px 24px var(--app-shadow-accent);
-  animation: loginLogoPlay 10s linear infinite;
+  animation: loginLogoPlay 2.4s ease-in-out infinite;
   transform-origin: center center;
   will-change: transform;
 }
@@ -326,29 +326,35 @@
   }
 }
 
+/* 居中原地：轻跳 + 抖动，无左右位移 */
 @keyframes loginLogoPlay {
-  0% {
-    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg) scale(1);
   }
-  4% {
-    transform: translate3d(0, -10px, 0) rotate(0deg) scale(1.02);
+  12% {
+    transform: translateY(-10px) rotate(0deg) scale(1.05);
   }
-  8%,
-  28% {
-    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  22% {
+    transform: translateY(0) rotate(0deg) scale(1);
+  }
+  32% {
+    transform: translateY(-4px) rotate(-5deg) scale(1.02);
+  }
+  40% {
+    transform: translateY(0) rotate(5deg) scale(1);
   }
   48% {
-    transform: translate3d(36px, 0, 0) rotate(220deg) scale(1);
+    transform: translateY(-2px) rotate(-4deg) scale(1.01);
   }
-  58%,
-  78% {
-    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  56% {
+    transform: translateY(0) rotate(3deg) scale(1);
   }
-  88% {
-    transform: translate3d(-36px, 0, 0) rotate(-220deg) scale(1);
+  64% {
+    transform: translateY(0) rotate(-2deg) scale(1);
   }
-  100% {
-    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  72% {
+    transform: translateY(0) rotate(0deg) scale(1);
   }
 }
 

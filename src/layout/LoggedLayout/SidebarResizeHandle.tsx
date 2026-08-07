@@ -7,31 +7,8 @@ import {
   SIDEBAR_WIDTH_MIN,
 } from '../../config'
 
+import { saveSidebarWidth } from './sidebarWidth'
 import styles from './styles.module.scss'
-
-export const SIDEBAR_WIDTH_KEY = 'sidebar-width'
-
-export { SIDEBAR_WIDTH_DEFAULT, SIDEBAR_WIDTH_MAX, SIDEBAR_WIDTH_MIN, clampSidebarWidth }
-
-export function loadSidebarWidth() {
-  try {
-    const raw = localStorage.getItem(SIDEBAR_WIDTH_KEY)
-    if (!raw) return SIDEBAR_WIDTH_DEFAULT
-    const n = Number(raw)
-    if (Number.isFinite(n)) return clampSidebarWidth(n)
-  } catch {
-    /* ignore */
-  }
-  return SIDEBAR_WIDTH_DEFAULT
-}
-
-function saveSidebarWidth(width: number) {
-  try {
-    localStorage.setItem(SIDEBAR_WIDTH_KEY, String(width))
-  } catch {
-    /* ignore */
-  }
-}
 
 type Props = {
   width: number
