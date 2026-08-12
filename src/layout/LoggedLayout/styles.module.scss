@@ -424,6 +424,11 @@
   flex-direction: column;
   gap: 8px;
   transition: padding 0.22s cubic-bezier(0.2, 0, 0, 1);
+
+  /* 菜单项自身带 overflow:hidden，默认会被 flex 压缩；禁止收缩以便出现滚动条 */
+  > * {
+    flex-shrink: 0;
+  }
 }
 
 .sidebarIsCollapsed .sidebarHeader,
@@ -449,6 +454,10 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+
+  > * {
+    flex-shrink: 0;
+  }
 }
 
 .sidebarMenuGroupTrigger {
@@ -494,6 +503,10 @@
   flex-direction: column;
   gap: 6px;
   padding-left: 20px;
+
+  > * {
+    flex-shrink: 0;
+  }
 }
 
 .sidebarMenuGroupChildrenFlat {
