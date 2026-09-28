@@ -4,10 +4,11 @@ import zhCN from 'antd/locale/zh_CN'
 
 import './assets/css/global.scss'
 import { appConfig } from './config'
+import { applyEffectiveFont, getAppFontFamily } from './fonts/appFont'
 import LazyRouter from './router'
 import { useStore } from './store'
 
-const APP_FONT_FAMILY = '"华文楷体", "STKaiti", "Kaiti SC", "KaiTi", "楷体", serif'
+void applyEffectiveFont()
 
 document.title = appConfig.title
 
@@ -29,6 +30,7 @@ notification.config({
 
 function AppRoot() {
   const themeDark = useStore((s) => s.themeDark)
+  const fontFamily = getAppFontFamily()
 
   return (
     <ConfigProvider
@@ -36,11 +38,12 @@ function AppRoot() {
       theme={{
         algorithm: themeDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
         token: {
-          fontFamily: APP_FONT_FAMILY,
-          fontFamilyCode: APP_FONT_FAMILY,
+          fontFamily,
+          fontFamilyCode: fontFamily,
           colorPrimary: themeDark ? '#5b9dff' : '#1677ff',
         },
-      }}>
+      }}
+    >
       <LazyRouter />
     </ConfigProvider>
   )

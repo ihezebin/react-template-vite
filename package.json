@@ -17,9 +17,12 @@
     ]
   },
   "dependencies": {
-    "@ant-design/icons": "^5.0.1",
+    "@ant-design/icons": "^6.3.2",
+    "@chinese-fonts/xiaolai": "^3.0.0",
+    "@free-fonts/zhuque-fangsong": "^1.0.0",
+    "@hanzi.pro/webfonts-lxgw-wenkai": "^0.1.0",
     "@hezebin/doraemon": "^1.3.4",
-    "antd": "^5.20.0",
+    "antd": "^6.6.0",
     "classnames": "^2.5.1",
     "dayjs": "^1.11.10",
     "react": "^18.3.1",

@@ -2,12 +2,12 @@
   --sidebar-width: 288px;
   --sidebar-collapsed-width: 72px;
   display: grid;
-  /* 中间列不占视觉宽度，拖拽条叠在接缝上，避免粗分割线 */
+  /* 中间列不占视觉宽度，拖拽条叠在接缝上 */
   grid-template-columns: var(--sidebar-width) 0 1fr;
   width: 100%;
-  min-width: 1100px;
   height: 100vh;
   height: 100dvh;
+  min-width: 1100px;
   overflow: hidden;
   background: var(--app-shell-bg);
   position: relative;
@@ -20,6 +20,7 @@
 
 .sidebar {
   position: relative;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   min-width: 0;
@@ -183,6 +184,9 @@
 }
 
 .sidebarBrandName {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-size: 16px;
   font-weight: 600;
   letter-spacing: 0.06em;
@@ -191,6 +195,20 @@
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+}
+
+.adminModeTag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+  color: #fff;
+  background: var(--app-grad-primary);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--app-accent) 28%, transparent);
+  -webkit-text-fill-color: #fff;
 }
 
 .sidebarCollapseBtn:global(.ant-btn) {
@@ -384,6 +402,11 @@
   box-shadow: 0 2px 8px var(--app-shadow-accent);
 }
 
+.sidebarUserBtn :global(.ant-badge) {
+  flex-shrink: 0;
+  line-height: 1;
+}
+
 .sidebarUserMeta {
   flex: 1;
   min-width: 0;
@@ -419,15 +442,35 @@
   min-height: 0;
   overflow-x: hidden;
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 10px 12px 16px;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-color) transparent;
   transition: padding 0.22s cubic-bezier(0.2, 0, 0, 1);
 
-  /* 菜单项自身带 overflow:hidden，默认会被 flex 压缩；禁止收缩以便出现滚动条 */
+  /* 子项不可被压缩：否则全部分组展开时会挤扁一级菜单，而不是出现滚动条 */
   > * {
     flex-shrink: 0;
+  }
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-color);
+    border-radius: 999px;
+
+    &:hover {
+      background-color: var(--scrollbar-hover-color);
+    }
   }
 }
 
@@ -454,10 +497,8 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-
-  > * {
-    flex-shrink: 0;
-  }
+  flex-shrink: 0;
+  min-height: 0;
 }
 
 .sidebarMenuGroupTrigger {
@@ -468,28 +509,54 @@
   margin-left: auto;
   font-size: 10px;
   color: var(--app-faint);
+  flex-shrink: 0;
+}
+
+.sidebarMenuGroupTrigger.featuredNav .sidebarMenuGroupArrow {
+  color: color-mix(in srgb, var(--app-accent) 70%, var(--app-faint));
+}
+
+.sidebarMenuGroupTrigger.featuredNav.active .sidebarMenuGroupArrow {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.sidebarMenuGroupTrigger .featuredBadge {
+  margin-left: 6px;
+  flex-shrink: 0;
 }
 
 .sidebarMenuGroupTrigger.isActiveGroup {
-  background: var(--app-nav-active);
+  border-color: var(--app-line-strong);
+  color: var(--app-ink);
+  background: var(--app-nav-bg);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+/* 收缩态：子菜单选中时，父图标使用与叶子选中相同的高亮 */
+.sidebarIsCollapsed .settingsNavItem.isActiveGroup {
+  background:
+    radial-gradient(ellipse 18px 60% at 100% 50%, rgba(255, 255, 255, 0.38), transparent 72%),
+    var(--app-nav-active);
   border-color: transparent;
   color: #fff;
   box-shadow: 0 6px 16px var(--app-shadow-accent);
 }
 
-.sidebarMenuGroupTrigger.isActiveGroup .settingsNavIcon,
-.sidebarMenuGroupTrigger.isActiveGroup .sidebarMenuGroupArrow {
+.sidebarIsCollapsed .settingsNavItem.isActiveGroup .settingsNavIcon {
   color: #fff;
+  transform: none;
 }
 
-.sidebarMenuGroupTrigger.isActiveGroup:hover {
-  background: var(--app-grad-primary);
+.sidebarIsCollapsed .settingsNavItem.isActiveGroup:hover {
+  background:
+    radial-gradient(ellipse 18px 60% at 100% 50%, rgba(255, 255, 255, 0.42), transparent 72%),
+    var(--app-grad-primary);
   color: #fff;
   box-shadow: 0 8px 20px var(--app-shadow-accent);
   transform: none;
 }
 
-.sidebarMenuGroupTrigger.isActiveGroup:hover .settingsNavIcon {
+.sidebarIsCollapsed .settingsNavItem.isActiveGroup:hover .settingsNavIcon {
   color: #fff;
   transform: none;
 }
@@ -503,10 +570,6 @@
   flex-direction: column;
   gap: 6px;
   padding-left: 20px;
-
-  > * {
-    flex-shrink: 0;
-  }
 }
 
 .sidebarMenuGroupChildrenFlat {
@@ -532,7 +595,8 @@
 }
 
 .sidebarSubmenuPanel {
-  width: 188px;
+  width: var(--sidebar-submenu-width, var(--sidebar-width, 288px));
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -558,6 +622,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-shrink: 0;
   text-align: left;
   padding: 12px 14px;
   margin-bottom: 0;
@@ -649,7 +714,10 @@
 }
 
 .settingsNavItem.active {
-  background: var(--app-nav-active);
+  padding-right: 26px;
+  background:
+    radial-gradient(ellipse 36px 80% at calc(100% - 2px) 50%, rgba(255, 255, 255, 0.32), transparent 70%),
+    var(--app-nav-active);
   color: #fff;
   box-shadow: 0 6px 16px var(--app-shadow-accent);
   transform: none;
@@ -666,13 +734,57 @@
 }
 
 .settingsNavItem.active:hover {
-  background: var(--app-grad-primary);
+  background:
+    radial-gradient(ellipse 36px 80% at calc(100% - 2px) 50%, rgba(255, 255, 255, 0.38), transparent 70%),
+    var(--app-grad-primary);
   color: #fff;
   box-shadow: 0 8px 20px var(--app-shadow-accent);
 }
 
 .settingsNavItem.active:hover .settingsNavIcon {
   color: #fff;
+}
+
+/* 选中态右侧：发光胶囊指示器 */
+.activeMark {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  z-index: 3;
+  width: 5px;
+  height: 18px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #fff 0%, rgba(255, 255, 255, 0.72) 100%);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.35),
+    0 0 10px 2px rgba(255, 255, 255, 0.85),
+    0 0 22px 6px rgba(255, 255, 255, 0.4);
+  transform: translateY(-50%);
+  animation: navActiveMark 1.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.sidebarMenuGroupTrigger.active {
+  padding-right: 38px;
+}
+
+.sidebarMenuGroupTrigger.active .sidebarMenuGroupArrow {
+  margin-right: 12px;
+}
+
+.sidebarIsCollapsed .settingsNavItem.active,
+.sidebarIsCollapsed .settingsNavItem.isActiveGroup {
+  padding-right: 0;
+}
+
+.sidebarIsCollapsed .activeMark {
+  right: 5px;
+  width: 3px;
+  height: 14px;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.3),
+    0 0 8px 2px rgba(255, 255, 255, 0.75),
+    0 0 14px 4px rgba(255, 255, 255, 0.35);
 }
 
 .projectItem {
@@ -682,6 +794,7 @@
   gap: 8px;
   width: 100%;
   min-width: 0;
+  flex-shrink: 0;
   overflow: hidden;
   text-align: left;
   padding: 11px 12px;
@@ -730,49 +843,465 @@
 }
 
 .projectItem.active {
-  background: var(--app-item-active);
-  border-color: var(--app-line-strong);
-  box-shadow:
-    0 0 0 1px var(--app-shadow-accent),
-    0 6px 16px var(--app-shadow-accent);
+  padding-right: 26px;
+  background:
+    radial-gradient(ellipse 36px 80% at calc(100% - 2px) 50%, rgba(255, 255, 255, 0.32), transparent 70%),
+    var(--app-nav-active);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 6px 16px var(--app-shadow-accent);
   cursor: default;
   transform: none;
 }
 
 .projectItem.active::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 10px;
-  bottom: 10px;
-  width: 3px;
-  border-radius: 0 3px 3px 0;
-  background: var(--app-grad-bar);
+  display: none;
+}
+
+.projectItem.active .settingsNavIcon,
+.projectItem.active .projectItemName {
+  color: #fff;
 }
 
 .projectItem.active:hover {
-  background: var(--app-item-active);
+  background:
+    radial-gradient(ellipse 36px 80% at calc(100% - 2px) 50%, rgba(255, 255, 255, 0.38), transparent 70%),
+    var(--app-grad-primary);
   transform: none;
+  box-shadow: 0 8px 20px var(--app-shadow-accent);
+}
+
+.featuredItem {
+  z-index: 1;
+  padding: 12px 12px 12px 14px;
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--app-accent) 18%, var(--app-item-bg)) 0%,
+      color-mix(in srgb, var(--app-accent-2) 10%, var(--app-item-bg)) 52%,
+      color-mix(in srgb, var(--app-accent-deep) 12%, var(--app-item-bg)) 100%
+    ) !important;
+  border-color: color-mix(in srgb, var(--app-accent) 42%, var(--app-panel-border)) !important;
+  color: var(--app-ink) !important;
+  box-shadow:
+    0 1px 0 color-mix(in srgb, #fff 55%, transparent) inset,
+    0 8px 22px color-mix(in srgb, var(--app-accent) 16%, transparent) !important;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    bottom: 8px;
+    width: 3px;
+    border-radius: 0 3px 3px 0;
+    background: var(--app-grad-bar);
+    opacity: 1;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: -40%;
+    left: -70%;
+    width: 45%;
+    height: 180%;
+    background: linear-gradient(
+      105deg,
+      transparent 30%,
+      color-mix(in srgb, var(--app-accent) 28%, transparent) 48%,
+      transparent 68%
+    );
+    transform: skewX(-18deg);
+    animation: featuredShine 3.6s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  .settingsNavIcon {
+    width: 28px;
+    height: 28px;
+    border-radius: 9px;
+    color: #fff !important;
+    background: var(--app-grad-primary) !important;
+    box-shadow: 0 6px 14px color-mix(in srgb, var(--app-accent) 32%, transparent);
+    font-size: 14px;
+    transform: none;
+  }
+
+  .projectItemName {
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    color: var(--app-ink);
+  }
+
+  .featuredBadge {
+    color: #fff;
+    background: var(--app-grad-primary);
+    border-color: transparent;
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--app-accent) 28%, transparent);
+  }
+
+  &:hover {
+    border-color: color-mix(in srgb, var(--app-accent) 55%, var(--app-panel-border)) !important;
+    box-shadow:
+      0 1px 0 color-mix(in srgb, #fff 65%, transparent) inset,
+      0 12px 28px color-mix(in srgb, var(--app-accent) 24%, transparent) !important;
+    transform: translateY(-2px);
+
+    .settingsNavIcon {
+      transform: scale(1.08) rotate(-5deg);
+    }
+
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  /* 选中：实心主题渐变 + 右侧光晕，与未选中浅强调底明确区分 */
+  &.active {
+    background:
+      radial-gradient(ellipse 36px 80% at calc(100% - 2px) 50%, rgba(255, 255, 255, 0.34), transparent 70%),
+      var(--app-grad-primary) !important;
+    border-color: transparent !important;
+    color: #fff !important;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.3) inset,
+      0 0 0 2px color-mix(in srgb, var(--app-accent) 35%, transparent),
+      0 12px 30px color-mix(in srgb, var(--app-accent) 42%, transparent) !important;
+    cursor: default;
+    animation: featuredItemBreath 3.2s ease-in-out infinite;
+
+    &::before {
+      display: none;
+    }
+
+    &::after {
+      background: linear-gradient(
+        105deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.28) 48%,
+        transparent 68%
+      );
+    }
+
+    .settingsNavIcon {
+      color: #fff !important;
+      background: rgba(255, 255, 255, 0.22) !important;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.18);
+    }
+
+    .projectItemName {
+      color: #fff;
+    }
+
+    .featuredBadge {
+      color: #0f172a;
+      background: rgba(255, 255, 255, 0.92);
+      border-color: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.16);
+      margin-right: 12px;
+    }
+  }
+
+  &.active:hover {
+    transform: none;
+    filter: brightness(1.04);
+  }
+}
+
+.featuredNav {
+  z-index: 1;
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--app-accent) 18%, var(--app-nav-bg)) 0%,
+      color-mix(in srgb, var(--app-accent-2) 10%, var(--app-nav-bg)) 52%,
+      color-mix(in srgb, var(--app-accent-deep) 12%, var(--app-nav-bg)) 100%
+    ) !important;
+  border-color: color-mix(in srgb, var(--app-accent) 42%, transparent) !important;
+  color: var(--app-ink) !important;
+  box-shadow:
+    0 1px 0 color-mix(in srgb, #fff 55%, transparent) inset,
+    0 8px 20px color-mix(in srgb, var(--app-accent) 14%, transparent) !important;
+  overflow: hidden;
+
+  .settingsNavIcon {
+    width: 28px;
+    height: 28px;
+    border-radius: 9px;
+    color: #fff !important;
+    background: var(--app-grad-primary) !important;
+    box-shadow: 0 6px 14px color-mix(in srgb, var(--app-accent) 28%, transparent);
+  }
+
+  .settingsNavLabel {
+    font-weight: 800;
+    color: var(--app-ink);
+  }
+
+  .featuredBadge {
+    color: #fff;
+    background: var(--app-grad-primary);
+    border-color: transparent;
+  }
+
+  &:hover {
+    border-color: color-mix(in srgb, var(--app-accent) 55%, transparent) !important;
+    transform: translateY(-1px);
+  }
+
+  &.active {
+    background:
+      radial-gradient(ellipse 36px 80% at calc(100% - 2px) 50%, rgba(255, 255, 255, 0.34), transparent 70%),
+      var(--app-grad-primary) !important;
+    border-color: transparent !important;
+    color: #fff !important;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.3) inset,
+      0 0 0 2px color-mix(in srgb, var(--app-accent) 35%, transparent),
+      0 12px 28px color-mix(in srgb, var(--app-accent) 40%, transparent) !important;
+    animation: featuredItemBreath 3.2s ease-in-out infinite;
+
+    .settingsNavIcon {
+      background: rgba(255, 255, 255, 0.22) !important;
+      box-shadow: none;
+    }
+
+    .settingsNavLabel {
+      color: #fff;
+    }
+
+    .featuredBadge {
+      color: #0f172a;
+      background: rgba(255, 255, 255, 0.92);
+      border-color: rgba(255, 255, 255, 0.95);
+      margin-right: 12px;
+    }
+  }
+
+  &.active:hover {
+    transform: none;
+    filter: brightness(1.04);
+  }
+}
+
+.featuredBadge {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  margin-left: auto;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1.35;
+  color: #fff;
+  background: var(--app-grad-primary);
+  border: 1px solid transparent;
+  animation: featuredBadgePulse 2.2s ease-in-out infinite;
+}
+
+@keyframes navActiveMark {
+  0%,
+  100% {
+    height: 14px;
+    opacity: 0.78;
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.28),
+      0 0 8px 2px rgba(255, 255, 255, 0.65),
+      0 0 16px 4px rgba(255, 255, 255, 0.28);
+  }
+  50% {
+    height: 22px;
+    opacity: 1;
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.5),
+      0 0 14px 3px rgba(255, 255, 255, 0.95),
+      0 0 28px 8px rgba(255, 255, 255, 0.48);
+  }
+}
+
+@keyframes featuredItemBreath {
+  0%,
+  100% {
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.28) inset,
+      0 0 0 2px color-mix(in srgb, var(--app-accent) 30%, transparent),
+      0 12px 28px color-mix(in srgb, var(--app-accent) 38%, transparent);
+  }
+  50% {
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.34) inset,
+      0 0 0 2px color-mix(in srgb, var(--app-accent) 42%, transparent),
+      0 16px 34px color-mix(in srgb, var(--app-accent) 50%, transparent);
+  }
+}
+
+@keyframes featuredShine {
+  0%,
+  40%,
+  100% {
+    transform: translateX(-30%) skewX(-18deg);
+    opacity: 0;
+  }
+  55% {
+    opacity: 1;
+  }
+  70% {
+    transform: translateX(280%) skewX(-18deg);
+    opacity: 0;
+  }
+}
+
+@keyframes featuredBadgePulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.06);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .featuredBadge,
+  .featuredItem.active,
+  .featuredNav.active,
+  .featuredItem::after,
+  .activeMark {
+    animation: none !important;
+  }
+}
+
+/* 收起侧栏：未选中浅强调 / 选中实心渐变 */
+.sidebarIsCollapsed .settingsNavItem.featuredNav {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--app-accent) 22%, var(--app-nav-bg)),
+      color-mix(in srgb, var(--app-accent-2) 14%, var(--app-nav-bg))
+    ) !important;
+  color: var(--app-ink) !important;
+  border-color: color-mix(in srgb, var(--app-accent) 40%, transparent) !important;
+
+  .settingsNavIcon {
+    color: #fff !important;
+    background: var(--app-grad-primary) !important;
+  }
+
+  .featuredBadge {
+    display: none;
+  }
+
+  &.active,
+  &.isActiveGroup {
+    background:
+      radial-gradient(ellipse 18px 60% at 100% 50%, rgba(255, 255, 255, 0.4), transparent 72%),
+      var(--app-grad-primary) !important;
+    color: #fff !important;
+    border-color: transparent !important;
+    box-shadow: 0 6px 16px var(--app-shadow-accent) !important;
+
+    .settingsNavIcon {
+      color: #fff !important;
+      background: rgba(255, 255, 255, 0.22) !important;
+    }
+  }
 }
 
 .main {
-  min-width: 800px;
+  position: relative;
+  min-width: 720px;
   min-height: 0;
   height: 100%;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
   background: var(--app-soft-bg);
-  position: relative;
 }
 
 .mainContent {
   position: relative;
   z-index: 1;
   flex: 1;
+  min-width: 0;
   min-height: 0;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
+  overflow-x: auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-color) rgba(15, 23, 42, 0.06);
+
+  &::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.04);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-color);
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+
+    &:hover {
+      background-color: var(--scrollbar-hover-color);
+    }
+  }
+}
+
+/* 浮层贴主区顶部，不占文档流，避免破坏子页 height/flex:1 布局 */
+.guestBanner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0;
+  padding: 12px 24px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--app-ink) 82%, transparent);
+  background: color-mix(in srgb, var(--app-accent) 12%, var(--app-surface, #fff));
+  border: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--app-accent) 18%, var(--app-line));
+  backdrop-filter: blur(10px);
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--app-accent) 10%, transparent);
+  pointer-events: auto;
+}
+
+.mainWithGuestBanner .mainContent {
+  /* 仅给顶栏留出视觉空隙，不参与子页 flex 高度链 */
+  scroll-padding-top: 52px;
+}
+
+.mainWithGuestBanner .mainContent > :global(:first-child) {
+  padding-top: 52px;
+  box-sizing: border-box;
+}
+
+.guestBannerLink {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  background: transparent;
+  color: var(--app-accent);
+  cursor: pointer;
+  font-size: 14px;
   padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }

@@ -1,0 +1,256 @@
+@keyframes discLoadSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes discLoadBar {
+  0%,
+  100% {
+    transform: scaleY(0.35);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes discLoadOrb {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translate(10px, -12px) scale(1.12);
+    opacity: 0.9;
+  }
+}
+
+@keyframes discLoadTonearm {
+  0%,
+  100% {
+    transform: rotate(12deg);
+  }
+  50% {
+    transform: rotate(22deg);
+  }
+}
+
+@keyframes discLoadTip {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  width: 100%;
+  padding: 56px 16px;
+  min-height: 280px;
+  background: transparent;
+}
+
+.loadingCover {
+  flex: 1;
+  min-height: 360px;
+  height: 100%;
+}
+
+.loadingStage {
+  position: relative;
+  width: 168px;
+  height: 168px;
+  display: grid;
+  place-items: center;
+}
+
+.loadingOrbA,
+.loadingOrbB {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(22px);
+  pointer-events: none;
+  animation: discLoadOrb 4.5s ease-in-out infinite;
+}
+
+.loadingOrbA {
+  width: 90px;
+  height: 90px;
+  top: 8%;
+  left: 4%;
+  background: color-mix(in srgb, var(--app-accent) 45%, transparent);
+}
+
+.loadingOrbB {
+  width: 72px;
+  height: 72px;
+  right: 2%;
+  bottom: 12%;
+  background: color-mix(in srgb, var(--app-accent-2) 40%, transparent);
+  animation-delay: -1.8s;
+}
+
+.loadingDisc {
+  position: relative;
+  z-index: 1;
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.14), transparent 30%),
+    repeating-radial-gradient(circle at 50% 50%, #12151c 0 2px, #1c212b 2px 4px);
+  box-shadow:
+    0 0 0 4px #0b0d12,
+    0 18px 40px rgba(0, 0, 0, 0.35),
+    0 0 40px color-mix(in srgb, var(--app-accent) 28%, transparent);
+  animation: discLoadSpin 3.2s linear infinite;
+}
+
+.loadingDiscRing,
+.loadingDiscRingB {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  pointer-events: none;
+}
+
+.loadingDiscRing {
+  inset: 14%;
+}
+
+.loadingDiscRingB {
+  inset: 24%;
+  border-color: rgba(255, 255, 255, 0.04);
+}
+
+.loadingDiscHub {
+  position: absolute;
+  inset: 32%;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #fff;
+  background: linear-gradient(145deg, var(--app-accent), var(--app-accent-deep));
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 255, 255, 0.18),
+    0 0 16px color-mix(in srgb, var(--app-accent) 45%, transparent);
+}
+
+.loadingTonearm {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  z-index: 2;
+  width: 56px;
+  height: 56px;
+  transform-origin: 10px 10px;
+  animation: discLoadTonearm 2.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.loadingTonearmPivot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #e8e8e8, #888);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.28);
+}
+
+.loadingTonearmShaft {
+  position: absolute;
+  top: 6px;
+  left: 12px;
+  width: 46px;
+  height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #ccc, #777);
+  transform: rotate(30deg);
+  transform-origin: left center;
+
+  &::after {
+    content: '';
+    position: absolute;
+    right: -2px;
+    top: -4px;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    background: var(--app-accent);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--app-accent) 60%, transparent);
+  }
+}
+
+.loadingBars {
+  position: absolute;
+  left: 50%;
+  bottom: 2px;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 22px;
+  transform: translateX(-50%);
+
+  > i {
+    display: block;
+    width: 3px;
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(180deg, var(--app-accent-2), var(--app-accent));
+    transform-origin: bottom;
+    animation: discLoadBar 0.85s ease-in-out infinite;
+
+    @for $n from 1 through 8 {
+      &:nth-child(#{$n}) {
+        animation-delay: #{($n - 1) * 0.07}s;
+        height: #{40 + ($n % 4) * 18}%;
+      }
+    }
+  }
+}
+
+.loadingTip {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: color-mix(in srgb, var(--app-ink) 62%, var(--app-accent));
+  animation: discLoadTip 1.8s ease-in-out infinite;
+}
+
+@media (max-width: 560px) {
+  .loadingStage {
+    width: 140px;
+    height: 140px;
+  }
+
+  .loadingDisc {
+    width: 96px;
+    height: 96px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loadingDisc,
+  .loadingBars > i,
+  .loadingOrbA,
+  .loadingOrbB,
+  .loadingTonearm,
+  .loadingTip {
+    animation: none !important;
+  }
+}

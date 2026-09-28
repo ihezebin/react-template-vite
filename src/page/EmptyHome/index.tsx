@@ -43,7 +43,7 @@ const EmptyHome = () => {
             className={classNames(styles.primaryBtn, styles.emptyHomeCta)}
             icon={<ThunderboltOutlined />}
             size="large"
-            onClick={() => navigate('/example/build_animation')}>
+            onClick={() => navigate('/console/example/build_animation')}>
             查看构建动画
           </Button>
           <p className={styles.emptyHomeHint}>侧边栏「示例」可切换首页动画与构建动画</p>

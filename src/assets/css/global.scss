@@ -1,13 +1,12 @@
-@use "theme" as *;
+@use 'theme' as *;
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
+  width: 100%;
   height: 100%;
-  /* 小屏不强行压缩布局，横向滚动以完整显示侧栏 + 内容区 */
-  min-width: 1100px;
-  overflow-x: auto;
-  overflow-y: hidden;
+  overflow: auto;
   background-color: var(--background-color);
   font-size: var(--font-size);
 
@@ -15,26 +14,26 @@ html, body {
   z-index: 0;
 
   * {
-    font-family: var(--font-family) !important;
+    font-family: var(--app-font-family) !important;
     box-sizing: border-box;
   }
 
   /* 设置滚动条轨道的样式 */
   ::-webkit-scrollbar {
-    width: 6px; /* 设置滚动条宽度 */
-    height: 6px;
+    width: 8px;
+    height: 8px;
   }
 
   /* 设置滚动条的轨道背景颜色 */
   ::-webkit-scrollbar-track {
-    //background-color: #f1f1f1;
-    border-radius: 6px;
+    background: transparent;
+    border-radius: 8px;
   }
 
   /* 设置滚动条的滑块颜色 */
   ::-webkit-scrollbar-thumb {
     background-color: var(--scrollbar-color);
-    border-radius: 6px;
+    border-radius: 8px;
 
     &:hover {
       background-color: var(--scrollbar-hover-color);
@@ -43,7 +42,1415 @@ html, body {
 }
 
 #root {
+  width: 100%;
   height: 100%;
-  min-width: 1100px;
+  min-height: 100%;
+  overflow: auto;
+}
+
+.ant-qrcode {
+  border: none !important;
+}
+
+/* ---------- 抽屉面板：避免纯白大块 ---------- */
+.ant-drawer .ant-drawer-content-wrapper {
   overflow: hidden;
+}
+
+.ant-drawer-content {
+  position: relative;
+  isolation: isolate;
+  /* 裁剪光效层，避免负 inset / translate 动画撑出滚动条 */
+  overflow: hidden !important;
+  clip-path: inset(0);
+  background:
+    radial-gradient(
+      90% 50% at 0% 0%,
+      color-mix(in srgb, var(--app-accent) 14%, transparent),
+      transparent 55%
+    ),
+    radial-gradient(
+      70% 40% at 100% 100%,
+      color-mix(in srgb, var(--app-accent-2) 10%, transparent),
+      transparent 50%
+    ),
+    linear-gradient(
+      160deg,
+      color-mix(in srgb, var(--app-accent) 6%, var(--app-surface-solid)),
+      var(--app-surface-solid) 48%,
+      color-mix(in srgb, var(--app-accent-2) 5%, var(--app-surface-solid))
+    ) !important;
+}
+
+.ant-drawer-content::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--app-accent),
+    var(--app-accent-2),
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: globalPanelTopShine 5.5s ease-in-out infinite;
+}
+
+.ant-drawer-content::after {
+  content: '';
+  position: absolute;
+  /* 勿用负 inset：会撑破 drawer body 的滚动区域 */
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 60%
+  );
+  opacity: 0.35;
+  mix-blend-mode: soft-light;
+  animation: globalPanelSheen 9s ease-in-out infinite;
+  will-change: transform;
+}
+
+.ant-drawer-header {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  background: transparent !important;
+  border-bottom-color: color-mix(in srgb, var(--app-accent) 12%, var(--app-line)) !important;
+}
+
+.ant-drawer-body {
+  position: relative;
+  z-index: 1;
+  background: transparent !important;
+  overflow-x: hidden !important;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  max-width: 100%;
+}
+
+.ant-drawer-footer {
+  position: relative;
+  z-index: 1;
+  background: transparent !important;
+  border-top-color: color-mix(in srgb, var(--app-accent) 12%, var(--app-line)) !important;
+}
+
+html[theme='dark'] .ant-drawer-content {
+  background:
+    radial-gradient(90% 50% at 0% 0%, rgba(91, 157, 255, 0.16), transparent 55%),
+    radial-gradient(70% 40% at 100% 100%, rgba(255, 107, 109, 0.1), transparent 50%), #12141c !important;
+}
+
+html[theme='dark'] .ant-drawer-content::after {
+  mix-blend-mode: screen;
+  opacity: 0.28;
+}
+
+/* ---------- Modal：玻璃面板 + 动效 ---------- */
+.ant-modal-content {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--app-accent) 18%, var(--app-line)) !important;
+  background:
+    radial-gradient(
+      90% 60% at 0% 0%,
+      color-mix(in srgb, var(--app-accent) 12%, transparent),
+      transparent 55%
+    ),
+    radial-gradient(
+      70% 50% at 100% 100%,
+      color-mix(in srgb, var(--app-accent-2) 8%, transparent),
+      transparent 50%
+    ),
+    linear-gradient(
+      155deg,
+      color-mix(in srgb, var(--app-accent) 7%, var(--app-surface-solid)),
+      var(--app-surface-solid) 50%,
+      color-mix(in srgb, var(--app-accent-2) 5%, var(--app-surface-solid))
+    ) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.7) inset,
+    0 24px 64px color-mix(in srgb, var(--app-accent) 16%, transparent) !important;
+}
+
+.ant-modal-content::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--app-accent),
+    var(--app-accent-2),
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: globalPanelTopShine 5s ease-in-out infinite;
+}
+
+.ant-modal-content::after {
+  content: '';
+  position: absolute;
+  inset: -45% -25%;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    118deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.42) 50%,
+    transparent 60%
+  );
+  opacity: 0.4;
+  mix-blend-mode: soft-light;
+  animation: globalPanelSheen 8s ease-in-out infinite;
+}
+
+.ant-modal-header,
+.ant-modal-body,
+.ant-modal-footer {
+  position: relative;
+  z-index: 1;
+  background: transparent !important;
+}
+
+html[theme='dark'] .ant-modal-content {
+  background:
+    radial-gradient(90% 60% at 0% 0%, rgba(91, 157, 255, 0.16), transparent 55%),
+    radial-gradient(70% 50% at 100% 100%, rgba(255, 107, 109, 0.1), transparent 50%), #12141c !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.06) inset,
+    0 28px 70px rgba(0, 0, 0, 0.55) !important;
+}
+
+html[theme='dark'] .ant-modal-content::after {
+  mix-blend-mode: screen;
+  opacity: 0.28;
+}
+
+@keyframes globalPanelTopShine {
+  0%,
+  100% {
+    background-position: 0% 50%;
+    opacity: 0.7;
+  }
+  50% {
+    background-position: 100% 50%;
+    opacity: 1;
+  }
+}
+
+@keyframes globalPanelSheen {
+  0%,
+  28% {
+    transform: translateX(-48%) skewX(-12deg);
+  }
+  68%,
+  100% {
+    transform: translateX(48%) skewX(-12deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ant-drawer-content::before,
+  .ant-drawer-content::after,
+  .ant-modal-content::before,
+  .ant-modal-content::after,
+  .ant-table-wrapper .ant-table-container::after {
+    animation: none !important;
+  }
+}
+
+/* ---------- 搜索 / 输入框：玻璃边框 ---------- */
+.ant-input:not(textarea),
+.ant-input-affix-wrapper,
+.ant-input-outlined:not(textarea),
+.ant-input-search .ant-input-group .ant-input-affix-wrapper,
+.ant-input-number,
+.ant-input-textarea-affix-wrapper {
+  color: var(--app-ink) !important;
+  border-radius: 12px !important;
+  border: 1px solid transparent !important;
+  background:
+    linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--app-accent) 5%, var(--app-surface-solid)),
+        color-mix(in srgb, var(--app-surface-solid) 92%, transparent)
+      )
+      padding-box,
+    linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--app-accent) 38%, var(--app-line)),
+        color-mix(in srgb, var(--app-accent-2) 22%, var(--app-line)),
+        color-mix(in srgb, var(--app-accent) 28%, var(--app-line))
+      )
+      border-box !important;
+  box-shadow:
+    0 1px 0 color-mix(in srgb, #fff 55%, transparent) inset,
+    0 4px 14px color-mix(in srgb, var(--app-accent) 6%, transparent) !important;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    filter 0.2s ease !important;
+}
+
+/* TextArea 本体也需要可见玻璃边框（勿套用内层去边框规则） */
+textarea.ant-input,
+.ant-input-outlined.ant-input-textarea,
+textarea.ant-input-outlined {
+  color: var(--app-ink) !important;
+  border-radius: 12px !important;
+  border: 1px solid transparent !important;
+  background:
+    linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--app-accent) 5%, var(--app-surface-solid)),
+        color-mix(in srgb, var(--app-surface-solid) 92%, transparent)
+      )
+      padding-box,
+    linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--app-accent) 38%, var(--app-line)),
+        color-mix(in srgb, var(--app-accent-2) 22%, var(--app-line)),
+        color-mix(in srgb, var(--app-accent) 28%, var(--app-line))
+      )
+      border-box !important;
+  box-shadow:
+    0 1px 0 color-mix(in srgb, #fff 55%, transparent) inset,
+    0 4px 14px color-mix(in srgb, var(--app-accent) 6%, transparent) !important;
+  transition:
+    box-shadow 0.2s ease,
+    filter 0.2s ease !important;
+}
+
+/* 仅去掉「包装器内部」的 input 边框，避免双重描边 */
+.ant-input-affix-wrapper > input.ant-input,
+.ant-input-group .ant-input-affix-wrapper .ant-input,
+.ant-input-number .ant-input-number-input {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding-inline: 10px !important;
+}
+
+.ant-input-affix-wrapper:not(.ant-input-affix-wrapper-disabled):hover,
+.ant-input-outlined:not(textarea):not(:disabled):hover,
+.ant-input:not(textarea):not(:disabled):hover,
+.ant-input-number:hover,
+textarea.ant-input:not(:disabled):hover {
+  filter: brightness(1.02);
+  box-shadow:
+    0 1px 0 color-mix(in srgb, #fff 65%, transparent) inset,
+    0 6px 18px color-mix(in srgb, var(--app-accent) 12%, transparent) !important;
+  background:
+    linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--app-accent) 8%, var(--app-surface-solid)),
+        color-mix(in srgb, var(--app-surface-solid) 94%, transparent)
+      )
+      padding-box,
+    linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--app-accent) 55%, transparent),
+        color-mix(in srgb, var(--app-accent-2) 40%, transparent),
+        color-mix(in srgb, var(--app-accent) 48%, transparent)
+      )
+      border-box !important;
+}
+
+.ant-input-affix-wrapper-focused,
+.ant-input-affix-wrapper:focus-within,
+.ant-input-outlined:not(textarea):focus,
+.ant-input-outlined:not(textarea):focus-within,
+.ant-input:not(textarea):focus,
+.ant-input-number-focused,
+.ant-input-number:focus-within,
+textarea.ant-input:focus {
+  filter: none;
+  box-shadow:
+    0 1px 0 color-mix(in srgb, #fff 70%, transparent) inset,
+    0 0 0 3px color-mix(in srgb, var(--app-accent) 16%, transparent),
+    0 8px 22px color-mix(in srgb, var(--app-accent) 14%, transparent) !important;
+  background:
+    linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--app-accent) 10%, var(--app-surface-solid)),
+        var(--app-surface-solid)
+      )
+      padding-box,
+    linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--app-accent) 75%, #fff),
+        color-mix(in srgb, var(--app-accent-2) 65%, transparent),
+        color-mix(in srgb, var(--app-accent-deep) 55%, transparent)
+      )
+      border-box !important;
+}
+
+/* Input.Search（antd 6 = Space.Compact，不再是 input-group） */
+.ant-input-search.ant-space-compact {
+  display: inline-flex !important;
+  width: 100%;
+  align-items: stretch;
+}
+
+.ant-input-search.ant-space-compact > .ant-input-affix-wrapper,
+.ant-input-search.ant-space-compact > .ant-input:not(textarea) {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* 左侧输入：去掉右侧圆弧，贴合搜索按钮 */
+.ant-input-search.ant-space-compact > .ant-input-affix-wrapper:not(:last-child),
+.ant-input-search.ant-space-compact > .ant-input:not(:last-child):not(textarea),
+.ant-input-search .ant-input-compact-item:not(.ant-input-compact-last-item),
+.ant-input-search
+  .ant-input-affix-wrapper.ant-input-compact-item:not(.ant-input-compact-last-item) {
+  border-start-end-radius: 0 !important;
+  border-end-end-radius: 0 !important;
+}
+
+/* 右侧搜索按钮：去掉左侧圆弧，保留右侧圆角 */
+.ant-input-search.ant-space-compact > .ant-btn:not(:first-child),
+.ant-input-search .ant-input-search-btn.ant-btn,
+.ant-input-search .ant-btn-compact-item:not(.ant-btn-compact-first-item) {
+  border-start-start-radius: 0 !important;
+  border-end-start-radius: 0 !important;
+}
+
+.ant-input-search .ant-input-search-btn.ant-btn,
+.ant-input-search .ant-btn-compact-last-item {
+  height: auto !important;
+  align-self: stretch;
+  border-start-end-radius: 12px !important;
+  border-end-end-radius: 12px !important;
+  border: 1px solid transparent !important;
+  background:
+    linear-gradient(var(--app-grad-primary), var(--app-grad-primary)) padding-box,
+    linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--app-accent) 55%, transparent),
+        color-mix(in srgb, var(--app-accent-2) 40%, transparent)
+      )
+      border-box !important;
+  color: #fff !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.22) inset,
+    0 4px 14px color-mix(in srgb, var(--app-accent) 18%, transparent) !important;
+  transition:
+    filter 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease !important;
+}
+
+.ant-input-search .ant-input-search-btn.ant-btn:hover,
+.ant-input-search .ant-input-search-btn.ant-btn:focus {
+  color: #fff !important;
+  filter: brightness(1.06);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.28) inset,
+    0 8px 20px color-mix(in srgb, var(--app-accent) 28%, transparent) !important;
+}
+
+.ant-input-search .ant-input-search-btn.ant-btn:active {
+  filter: brightness(0.97);
+  transform: translateY(0.5px);
+}
+
+/*
+ * Space.Compact 通用：覆盖输入框/Select 的 border-radius: 12px !important，
+ * 否则左侧控件右侧仍带圆弧，与右侧按钮对不齐。
+ */
+.ant-space-compact > .ant-input-affix-wrapper:not(:last-child),
+.ant-space-compact > .ant-input:not(:last-child):not(textarea),
+.ant-space-compact > .ant-input-outlined:not(:last-child):not(textarea),
+.ant-space-compact > .ant-input-number:not(:last-child),
+.ant-space-compact > .ant-select:not(:last-child),
+.ant-input-compact-item:not(.ant-input-compact-last-item),
+.ant-input-affix-wrapper.ant-input-compact-item:not(.ant-input-compact-last-item),
+.ant-select-compact-item:not(.ant-select-compact-last-item),
+.ant-input-number-compact-item:not(.ant-input-number-compact-last-item) {
+  border-start-end-radius: 0 !important;
+  border-end-end-radius: 0 !important;
+}
+
+.ant-space-compact > .ant-select:not(:last-child) .ant-select-selector,
+.ant-select-compact-item:not(.ant-select-compact-last-item) .ant-select-selector {
+  border-start-end-radius: 0 !important;
+  border-end-end-radius: 0 !important;
+}
+
+.ant-space-compact > .ant-btn:not(:first-child),
+.ant-space-compact > .ant-input-search-btn:not(:first-child),
+.ant-btn-compact-item:not(.ant-btn-compact-first-item) {
+  border-start-start-radius: 0 !important;
+  border-end-start-radius: 0 !important;
+}
+
+.ant-space-compact > .ant-btn:last-child,
+.ant-space-compact > .ant-input-search-btn:last-child,
+.ant-btn-compact-last-item {
+  border-start-end-radius: 12px !important;
+  border-end-end-radius: 12px !important;
+}
+
+.ant-space-compact > .ant-input-affix-wrapper:first-child,
+.ant-space-compact > .ant-input:first-child:not(textarea),
+.ant-space-compact > .ant-select:first-child,
+.ant-input-compact-first-item,
+.ant-input-affix-wrapper.ant-input-compact-first-item,
+.ant-select-compact-first-item {
+  border-start-start-radius: 12px !important;
+  border-end-start-radius: 12px !important;
+}
+
+/* InputNumber 前后缀：Space.Compact + Space.Addon，外层一体圆角 */
+.ant-space-compact:has(> .ant-space-addon) {
+  display: inline-flex !important;
+  align-items: stretch;
+  vertical-align: top;
+  overflow: hidden;
+  border-radius: 12px !important;
+  border: 1px solid transparent !important;
+  background:
+    linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--app-accent) 5%, var(--app-surface-solid)),
+        color-mix(in srgb, var(--app-surface-solid) 92%, transparent)
+      )
+      padding-box,
+    linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--app-accent) 38%, var(--app-line)),
+        color-mix(in srgb, var(--app-accent-2) 22%, var(--app-line)),
+        color-mix(in srgb, var(--app-accent) 28%, var(--app-line))
+      )
+      border-box !important;
+  box-shadow:
+    0 1px 0 color-mix(in srgb, #fff 55%, transparent) inset,
+    0 4px 14px color-mix(in srgb, var(--app-accent) 6%, transparent) !important;
+  transition:
+    box-shadow 0.2s ease,
+    filter 0.2s ease !important;
+}
+
+.ant-space-compact:has(> .ant-space-addon):hover {
+  filter: brightness(1.02);
+  box-shadow:
+    0 1px 0 color-mix(in srgb, #fff 65%, transparent) inset,
+    0 6px 18px color-mix(in srgb, var(--app-accent) 12%, transparent) !important;
+}
+
+.ant-space-compact:has(> .ant-space-addon):focus-within {
+  filter: none;
+  box-shadow:
+    0 1px 0 color-mix(in srgb, #fff 70%, transparent) inset,
+    0 0 0 3px color-mix(in srgb, var(--app-accent) 18%, transparent),
+    0 8px 22px color-mix(in srgb, var(--app-accent) 14%, transparent) !important;
+}
+
+.ant-space-compact:has(> .ant-space-addon) > .ant-input-number,
+.ant-space-compact:has(> .ant-space-addon) > .ant-input-number:hover,
+.ant-space-compact:has(> .ant-space-addon) > .ant-input-number-focused,
+.ant-space-compact:has(> .ant-space-addon) > .ant-input-number:focus-within {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+.ant-space-compact:has(> .ant-space-addon) > .ant-space-addon {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px !important;
+  margin: 0 !important;
+  color: var(--app-ink) !important;
+  font-weight: 650;
+  white-space: nowrap;
+  border: none !important;
+  border-radius: 0 !important;
+  border-inline-start: 1px solid color-mix(in srgb, var(--app-accent) 14%, var(--app-line)) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html[theme='dark'] .ant-space-compact:has(> .ant-space-addon) {
+  background:
+    linear-gradient(180deg, rgba(91, 157, 255, 0.08), rgba(18, 20, 28, 0.92)) padding-box,
+    linear-gradient(
+        135deg,
+        rgba(91, 157, 255, 0.4),
+        rgba(255, 107, 109, 0.22),
+        rgba(91, 157, 255, 0.32)
+      )
+      border-box !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.05) inset,
+    0 6px 18px rgba(0, 0, 0, 0.28) !important;
+}
+
+html[theme='dark'] .ant-space-compact:has(> .ant-space-addon) > .ant-space-addon {
+  border-inline-start-color: rgba(91, 157, 255, 0.22) !important;
+  background: transparent !important;
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+html[theme='dark'] .ant-space-compact:has(> .ant-space-addon):focus-within {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.06) inset,
+    0 0 0 3px rgba(91, 157, 255, 0.2),
+    0 10px 26px rgba(0, 0, 0, 0.4) !important;
+}
+
+.ant-input-clear-icon,
+.ant-input-prefix,
+.ant-input-suffix {
+  color: var(--app-muted) !important;
+}
+
+.ant-input::placeholder,
+.ant-input-affix-wrapper input::placeholder {
+  color: var(--app-faint) !important;
+}
+
+html[theme='dark'] {
+  .ant-input:not(textarea),
+  .ant-input-affix-wrapper,
+  .ant-input-outlined:not(textarea),
+  .ant-input-search .ant-input-group .ant-input-affix-wrapper,
+  .ant-input-number,
+  textarea.ant-input {
+    background:
+      linear-gradient(180deg, rgba(91, 157, 255, 0.08), rgba(18, 20, 28, 0.92)) padding-box,
+      linear-gradient(
+          135deg,
+          rgba(91, 157, 255, 0.4),
+          rgba(255, 107, 109, 0.22),
+          rgba(91, 157, 255, 0.32)
+        )
+        border-box !important;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.05) inset,
+      0 6px 18px rgba(0, 0, 0, 0.28) !important;
+  }
+
+  .ant-input-affix-wrapper-focused,
+  .ant-input-affix-wrapper:focus-within,
+  .ant-input-outlined:not(textarea):focus,
+  .ant-input-outlined:not(textarea):focus-within,
+  .ant-input:not(textarea):focus,
+  .ant-input-number-focused,
+  .ant-input-number:focus-within,
+  textarea.ant-input:focus {
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.06) inset,
+      0 0 0 3px rgba(91, 157, 255, 0.2),
+      0 10px 26px rgba(0, 0, 0, 0.4) !important;
+  }
+}
+
+/* ---------- 默认按钮（刷新等无 type 的 blank 按钮） ---------- */
+/* 用 :where 降低优先级，避免盖住批量删除/下载等实心渐变按钮 */
+:where(.ant-btn.ant-btn-default):not(.ant-btn-dangerous):not(.ant-input-search-button):not(
+    :disabled
+  ):not(.app-solid-btn) {
+  color: var(--app-ink) !important;
+  font-weight: 650;
+  border-radius: 12px !important;
+  border: 1px solid transparent !important;
+  background:
+    linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--app-accent) 7%, var(--app-surface-solid)),
+        color-mix(in srgb, var(--app-surface-solid) 94%, transparent)
+      )
+      padding-box,
+    linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--app-accent) 42%, var(--app-line)),
+        color-mix(in srgb, var(--app-accent-2) 26%, var(--app-line)),
+        color-mix(in srgb, var(--app-accent) 32%, var(--app-line))
+      )
+      border-box !important;
+  box-shadow:
+    0 1px 0 color-mix(in srgb, #fff 55%, transparent) inset,
+    0 4px 14px color-mix(in srgb, var(--app-accent) 8%, transparent) !important;
+  transition:
+    filter 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.18s ease !important;
+
+  .anticon {
+    color: inherit;
+  }
+
+  &:hover,
+  &:focus {
+    color: var(--app-ink) !important;
+    filter: brightness(1.03);
+    transform: translateY(-1px);
+    box-shadow:
+      0 1px 0 color-mix(in srgb, #fff 65%, transparent) inset,
+      0 8px 18px color-mix(in srgb, var(--app-accent) 16%, transparent) !important;
+  }
+
+  &:active {
+    transform: translateY(0);
+    filter: brightness(0.98);
+  }
+}
+
+html[theme='dark']
+  :where(.ant-btn.ant-btn-default):not(.ant-btn-dangerous):not(.ant-input-search-button):not(
+    :disabled
+  ):not(.app-solid-btn) {
+  background:
+    linear-gradient(180deg, rgba(91, 157, 255, 0.12), rgba(18, 20, 28, 0.92)) padding-box,
+    linear-gradient(
+        135deg,
+        rgba(91, 157, 255, 0.45),
+        rgba(255, 107, 109, 0.22),
+        rgba(91, 157, 255, 0.35)
+      )
+      border-box !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.05) inset,
+    0 6px 16px rgba(0, 0, 0, 0.28) !important;
+}
+
+/* ---------- Select（Ant Design 6：边框/背景在根节点，与输入框统一玻璃样式） ---------- */
+.ant-select:not(.ant-select-borderless):not(.ant-select-customize-input) {
+  --ant-select-border-color: transparent !important;
+  --ant-select-background-color: transparent !important;
+  --ant-select-border-radius: 12px !important;
+  color: var(--app-ink) !important;
+  align-items: center !important;
+  border-radius: 12px !important;
+  border: 1px solid transparent !important;
+  background:
+    linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--app-accent) 5%, var(--app-surface-solid)),
+        color-mix(in srgb, var(--app-surface-solid) 92%, transparent)
+      )
+      padding-box,
+    linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--app-accent) 38%, var(--app-line)),
+        color-mix(in srgb, var(--app-accent-2) 22%, var(--app-line)),
+        color-mix(in srgb, var(--app-accent) 28%, var(--app-line))
+      )
+      border-box !important;
+  box-shadow:
+    0 1px 0 color-mix(in srgb, #fff 55%, transparent) inset,
+    0 4px 14px color-mix(in srgb, var(--app-accent) 6%, transparent) !important;
+  transition:
+    box-shadow 0.2s ease,
+    filter 0.2s ease !important;
+}
+
+/* 兼容仍带 selector 的场景（旧结构 / 第三方包装） */
+.ant-select:not(.ant-select-borderless) .ant-select-selector {
+  color: inherit !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: inherit !important;
+}
+
+.ant-select:not(.ant-select-disabled):not(.ant-select-borderless):not(
+    .ant-select-customize-input
+  ):hover {
+  --ant-select-border-color: transparent !important;
+  --ant-select-background-color: transparent !important;
+  filter: brightness(1.02);
+  box-shadow:
+    0 1px 0 color-mix(in srgb, #fff 65%, transparent) inset,
+    0 6px 18px color-mix(in srgb, var(--app-accent) 12%, transparent) !important;
+  background:
+    linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--app-accent) 8%, var(--app-surface-solid)),
+        color-mix(in srgb, var(--app-surface-solid) 94%, transparent)
+      )
+      padding-box,
+    linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--app-accent) 52%, var(--app-line)),
+        color-mix(in srgb, var(--app-accent-2) 32%, var(--app-line)),
+        color-mix(in srgb, var(--app-accent) 42%, var(--app-line))
+      )
+      border-box !important;
+}
+
+.ant-select-focused:not(.ant-select-disabled):not(.ant-select-borderless):not(
+    .ant-select-customize-input
+  ),
+.ant-select-open:not(.ant-select-disabled):not(.ant-select-borderless):not(
+    .ant-select-customize-input
+  ) {
+  --ant-select-border-color: transparent !important;
+  --ant-select-background-color: transparent !important;
+  filter: none;
+  box-shadow:
+    0 1px 0 color-mix(in srgb, #fff 70%, transparent) inset,
+    0 0 0 3px color-mix(in srgb, var(--app-accent) 16%, transparent),
+    0 8px 22px color-mix(in srgb, var(--app-accent) 14%, transparent) !important;
+  background:
+    linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--app-accent) 10%, var(--app-surface-solid)),
+        var(--app-surface-solid)
+      )
+      padding-box,
+    linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--app-accent) 75%, #fff),
+        color-mix(in srgb, var(--app-accent-2) 65%, transparent),
+        color-mix(in srgb, var(--app-accent-deep) 55%, transparent)
+      )
+      border-box !important;
+}
+
+.ant-select .ant-select-selection-placeholder,
+.ant-select .ant-select-placeholder {
+  color: var(--app-faint) !important;
+}
+
+.ant-select .ant-select-arrow,
+.ant-select .ant-select-suffix,
+.ant-select .ant-select-clear {
+  color: var(--app-muted) !important;
+}
+
+.ant-select .ant-select-clear:hover {
+  color: var(--app-ink) !important;
+}
+
+.ant-select-multiple .ant-select-selection-item {
+  --ant-select-multi-item-background: color-mix(
+    in srgb,
+    var(--app-accent) 10%,
+    var(--app-surface-solid)
+  ) !important;
+  --ant-select-multi-item-border-color: color-mix(
+    in srgb,
+    var(--app-accent) 22%,
+    var(--app-line)
+  ) !important;
+  --ant-select-multi-item-border-radius: 8px !important;
+  color: var(--app-ink) !important;
+  border: 1px solid color-mix(in srgb, var(--app-accent) 22%, var(--app-line)) !important;
+  background: color-mix(in srgb, var(--app-accent) 10%, var(--app-surface-solid)) !important;
+  border-radius: 8px !important;
+}
+
+.ant-select-dropdown {
+  padding: 6px !important;
+  border-radius: 14px !important;
+  border: 1px solid color-mix(in srgb, var(--app-accent) 18%, var(--app-line)) !important;
+  background: linear-gradient(
+    165deg,
+    color-mix(in srgb, var(--app-accent) 8%, var(--app-surface-solid)),
+    var(--app-surface-solid) 45%,
+    color-mix(in srgb, var(--app-accent-2) 4%, var(--app-surface-solid))
+  ) !important;
+  box-shadow:
+    0 1px 0 color-mix(in srgb, #fff 55%, transparent) inset,
+    0 16px 40px color-mix(in srgb, var(--app-accent) 14%, transparent),
+    0 8px 24px rgba(0, 0, 0, 0.08) !important;
+  overflow: hidden;
+}
+
+.ant-select-dropdown .ant-select-item {
+  border-radius: 10px !important;
+  color: var(--app-ink) !important;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease !important;
+}
+
+.ant-select-dropdown .ant-select-item-option-active:not(.ant-select-item-option-disabled) {
+  background: color-mix(in srgb, var(--app-accent) 10%, transparent) !important;
+}
+
+.ant-select-dropdown .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+  font-weight: 650 !important;
+  color: var(--app-ink) !important;
+  background: color-mix(in srgb, var(--app-accent) 16%, transparent) !important;
+}
+
+.ant-select-dropdown
+  .ant-select-item-option-selected:not(
+    .ant-select-item-option-disabled
+  ).ant-select-item-option-active {
+  background: color-mix(in srgb, var(--app-accent) 20%, transparent) !important;
+}
+
+.ant-select-dropdown .rc-virtual-list-holder-inner {
+  gap: 2px;
+}
+
+html[theme='dark'] {
+  .ant-select:not(.ant-select-borderless):not(.ant-select-customize-input) {
+    --ant-select-border-color: transparent !important;
+    --ant-select-background-color: transparent !important;
+    background:
+      linear-gradient(180deg, rgba(91, 157, 255, 0.08), rgba(18, 20, 28, 0.92)) padding-box,
+      linear-gradient(
+          135deg,
+          rgba(91, 157, 255, 0.4),
+          rgba(255, 107, 109, 0.22),
+          rgba(91, 157, 255, 0.32)
+        )
+        border-box !important;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.05) inset,
+      0 6px 18px rgba(0, 0, 0, 0.28) !important;
+  }
+
+  .ant-select:not(.ant-select-disabled):not(.ant-select-borderless):not(
+      .ant-select-customize-input
+    ):hover {
+    background:
+      linear-gradient(180deg, rgba(91, 157, 255, 0.14), rgba(18, 20, 28, 0.94)) padding-box,
+      linear-gradient(
+          135deg,
+          rgba(91, 157, 255, 0.55),
+          rgba(255, 107, 109, 0.28),
+          rgba(91, 157, 255, 0.4)
+        )
+        border-box !important;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.06) inset,
+      0 8px 20px rgba(0, 0, 0, 0.34) !important;
+  }
+
+  .ant-select-focused:not(.ant-select-disabled):not(.ant-select-borderless):not(
+      .ant-select-customize-input
+    ),
+  .ant-select-open:not(.ant-select-disabled):not(.ant-select-borderless):not(
+      .ant-select-customize-input
+    ) {
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.06) inset,
+      0 0 0 3px rgba(91, 157, 255, 0.2),
+      0 10px 26px rgba(0, 0, 0, 0.4) !important;
+    background:
+      linear-gradient(180deg, rgba(91, 157, 255, 0.16), rgba(18, 20, 28, 0.96)) padding-box,
+      linear-gradient(
+          135deg,
+          rgba(91, 157, 255, 0.7),
+          rgba(255, 107, 109, 0.35),
+          rgba(91, 157, 255, 0.5)
+        )
+        border-box !important;
+  }
+
+  .ant-select-multiple .ant-select-selection-item {
+    border-color: rgba(91, 157, 255, 0.28) !important;
+    background: rgba(91, 157, 255, 0.14) !important;
+  }
+
+  .ant-select-dropdown {
+    border-color: rgba(91, 157, 255, 0.22) !important;
+    background: linear-gradient(
+      165deg,
+      rgba(91, 157, 255, 0.12),
+      rgba(18, 20, 28, 0.96) 48%,
+      rgba(255, 107, 109, 0.06)
+    ) !important;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.04) inset,
+      0 18px 42px rgba(0, 0, 0, 0.45) !important;
+  }
+
+  .ant-select-dropdown .ant-select-item-option-active:not(.ant-select-item-option-disabled) {
+    background: rgba(91, 157, 255, 0.14) !important;
+  }
+
+  .ant-select-dropdown .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+    background: rgba(91, 157, 255, 0.22) !important;
+  }
+}
+
+/* ---------- 全局表格美化 ---------- */
+.ant-table-wrapper {
+  .ant-spin-container,
+  .ant-table {
+    position: relative;
+    z-index: 1;
+    background: transparent !important;
+  }
+
+  .ant-table-container {
+    position: relative;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--app-accent) 18%, var(--app-line));
+    background: linear-gradient(
+      155deg,
+      color-mix(in srgb, var(--app-accent) 8%, var(--app-surface-solid)) 0%,
+      var(--app-surface-solid) 42%,
+      color-mix(in srgb, var(--app-accent-2) 5%, var(--app-surface-solid)) 100%
+    );
+    box-shadow:
+      0 1px 0 color-mix(in srgb, #fff 60%, transparent) inset,
+      0 0 0 1px color-mix(in srgb, var(--app-accent) 6%, transparent),
+      0 16px 40px color-mix(in srgb, var(--app-accent) 10%, transparent);
+  }
+
+  .ant-table-container::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 3px;
+    z-index: 3;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--app-accent),
+      var(--app-accent-2),
+      transparent
+    );
+    background-size: 200% 100%;
+    opacity: 0.9;
+    pointer-events: none;
+    animation: globalPanelTopShine 5.5s ease-in-out infinite;
+  }
+
+  .ant-table-container::after {
+    content: '';
+    position: absolute;
+    inset: -40% -20%;
+    z-index: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      115deg,
+      transparent 40%,
+      rgba(255, 255, 255, 0.38) 50%,
+      transparent 60%
+    );
+    opacity: 0.32;
+    mix-blend-mode: soft-light;
+    animation: globalPanelSheen 10s ease-in-out infinite;
+  }
+
+  .ant-table-thead > tr > th {
+    position: relative;
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--app-accent) 14%, var(--app-surface-solid)),
+      color-mix(in srgb, var(--app-accent) 5%, var(--app-surface-solid))
+    ) !important;
+    color: var(--app-ink) !important;
+    font-weight: 750 !important;
+    font-size: 13px !important;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid color-mix(in srgb, var(--app-accent) 18%, var(--app-line)) !important;
+    padding-top: 14px !important;
+    padding-bottom: 14px !important;
+  }
+
+  .ant-table-thead > tr > th::after {
+    content: '';
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in srgb, var(--app-accent) 35%, transparent),
+      transparent
+    );
+  }
+
+  .ant-table-tbody > tr:not(.ant-table-measure-row) > td {
+    background: transparent !important;
+    border-bottom: 1px solid color-mix(in srgb, var(--app-line) 80%, transparent) !important;
+    transition:
+      background 0.18s ease,
+      box-shadow 0.18s ease;
+    padding-top: 12px !important;
+    padding-bottom: 12px !important;
+  }
+
+  /* scroll.y 会插入列宽测量行（内含各列标题）；勿套用单元格 padding，否则会露出一条「空行」 */
+  .ant-table-tbody > tr.ant-table-measure-row,
+  .ant-table-tbody > tr.ant-table-measure-row > td {
+    padding: 0 !important;
+    border: 0 !important;
+    height: 0 !important;
+    line-height: 0 !important;
+    font-size: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .ant-table-tbody > tr.ant-table-measure-row > td > div {
+    height: 0 !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .ant-table-tbody > tr:not(.ant-table-measure-row):nth-child(even) > td {
+    background: color-mix(in srgb, var(--app-accent) 4%, transparent) !important;
+  }
+
+  .ant-table-tbody > tr:not(.ant-table-measure-row):hover > td {
+    background: color-mix(in srgb, var(--app-accent) 11%, transparent) !important;
+  }
+
+  .ant-table-tbody > tr:not(.ant-table-measure-row):hover > td:first-child {
+    box-shadow: inset 3px 0 0 var(--app-accent);
+  }
+
+  .ant-table-tbody > tr.ant-table-row-selected > td {
+    background: color-mix(in srgb, var(--app-accent) 14%, transparent) !important;
+  }
+
+  .ant-table-tbody > tr.ant-table-row-selected:hover > td {
+    background: color-mix(in srgb, var(--app-accent) 18%, transparent) !important;
+  }
+
+  .ant-table-tbody > tr.ant-table-row-selected > td:first-child {
+    box-shadow: inset 3px 0 0 var(--app-accent-2);
+  }
+
+  .ant-table-cell-fix {
+    background: color-mix(in srgb, var(--app-surface-solid) 90%, var(--app-accent) 10%) !important;
+  }
+
+  .ant-table-pagination.ant-pagination {
+    margin: 16px 2px 2px !important;
+  }
+
+  .ant-pagination .ant-pagination-item {
+    border-radius: 10px !important;
+    border-color: color-mix(in srgb, var(--app-accent) 16%, var(--app-line)) !important;
+    background: color-mix(in srgb, var(--app-accent) 4%, var(--app-surface-solid)) !important;
+  }
+
+  .ant-pagination .ant-pagination-item-active {
+    border-color: transparent !important;
+    background: var(--app-grad-primary) !important;
+
+    a {
+      color: #fff !important;
+    }
+  }
+
+  .ant-table-placeholder .ant-table-cell {
+    position: relative;
+    background: transparent !important;
+    border-bottom: none !important;
+    padding: 16px 12px !important;
+  }
+
+  .ant-table-placeholder .ant-table-cell::before {
+    content: none;
+  }
+
+  /* 空态占满表格内容区，去掉默认空白感 */
+  .ant-table-placeholder {
+    .ant-empty {
+      margin: 0 !important;
+    }
+  }
+}
+
+html[theme='dark'] .ant-table-wrapper {
+  .ant-table-container {
+    border-color: rgba(255, 255, 255, 0.08);
+    background: linear-gradient(
+      160deg,
+      rgba(91, 157, 255, 0.1) 0%,
+      rgba(18, 20, 28, 0.96) 40%,
+      rgba(255, 107, 109, 0.04) 100%
+    );
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.04) inset,
+      0 16px 42px rgba(0, 0, 0, 0.4);
+  }
+
+  .ant-table-thead > tr > th {
+    background: linear-gradient(
+      180deg,
+      rgba(91, 157, 255, 0.16),
+      rgba(255, 255, 255, 0.03)
+    ) !important;
+    border-bottom-color: rgba(91, 157, 255, 0.22) !important;
+  }
+
+  .ant-table-tbody > tr:not(.ant-table-measure-row):nth-child(even) > td {
+    background: rgba(255, 255, 255, 0.028) !important;
+  }
+
+  .ant-table-tbody > tr:not(.ant-table-measure-row):hover > td {
+    background: rgba(91, 157, 255, 0.12) !important;
+  }
+
+  .ant-table-tbody > tr.ant-table-row-selected > td {
+    background: rgba(91, 157, 255, 0.16) !important;
+  }
+
+  .ant-pagination .ant-pagination-item {
+    background: rgba(255, 255, 255, 0.04) !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+  }
+}
+
+/* ---------- 二次确认弹窗美化 ---------- */
+.app-confirm-modal.ant-modal-confirm .ant-modal-content {
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--app-accent) 18%, var(--app-line));
+  background:
+    radial-gradient(
+      90% 60% at 0% 0%,
+      color-mix(in srgb, var(--app-accent) 12%, transparent),
+      transparent 55%
+    ),
+    linear-gradient(
+      160deg,
+      color-mix(in srgb, var(--app-accent) 6%, var(--app-surface-solid)),
+      var(--app-surface-solid) 48%,
+      color-mix(in srgb, var(--app-accent-2) 5%, var(--app-surface-solid))
+    );
+  box-shadow:
+    0 1px 0 color-mix(in srgb, #fff 70%, transparent) inset,
+    0 22px 56px color-mix(in srgb, var(--app-accent) 16%, transparent);
+}
+
+.app-confirm-modal.ant-modal-confirm .ant-modal-confirm-body {
+  display: flex;
+  gap: 14px;
+}
+
+.app-confirm-modal.ant-modal-confirm .ant-modal-confirm-title {
+  font-weight: 750;
+  font-size: 16px;
+  letter-spacing: 0.01em;
+}
+
+.app-confirm-modal.ant-modal-confirm .ant-modal-confirm-content {
+  margin-top: 6px;
+  color: var(--app-ink);
+}
+
+.app-confirm-modal.ant-modal-confirm .ant-modal-confirm-btns {
+  margin-top: 22px;
+}
+
+.app-confirm-modal .app-confirm-ok.ant-btn-primary {
+  border: none;
+  background: var(--app-grad-primary);
+  box-shadow: 0 8px 18px var(--app-shadow-accent);
+}
+
+.app-confirm-modal .app-confirm-ok.ant-btn-primary:hover {
+  background: var(--app-grad-primary-hover) !important;
+}
+
+.app-confirm-danger.ant-modal-confirm .ant-modal-confirm-body > .anticon {
+  color: #ff4d4f !important;
+}
+
+.app-confirm-primary.ant-modal-confirm .ant-modal-confirm-body > .anticon {
+  color: var(--app-accent) !important;
+}
+
+html[theme='dark'] .app-confirm-modal.ant-modal-confirm .ant-modal-content {
+  border-color: rgba(255, 255, 255, 0.08);
+  background:
+    radial-gradient(90% 60% at 0% 0%, rgba(91, 157, 255, 0.14), transparent 55%),
+    linear-gradient(160deg, #161821, #12141c 55%, #14161f);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.05) inset,
+    0 22px 56px rgba(0, 0, 0, 0.45);
+}
+
+/* ---------- 全局 Notification 美化 ---------- */
+.ant-notification .ant-notification-notice,
+.app-notify.ant-notification-notice {
+  width: 360px;
+  padding: 14px 16px;
+  border-radius: 14px !important;
+  border: 1px solid transparent;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.72) inset,
+    0 16px 36px rgba(15, 23, 42, 0.12) !important;
+}
+
+.ant-notification .ant-notification-notice-message,
+.app-notify .ant-notification-notice-message {
+  margin-bottom: 4px !important;
+  font-size: 15px !important;
+  font-weight: 750 !important;
+  letter-spacing: 0.01em;
+  color: rgba(15, 23, 42, 0.92) !important;
+  line-height: 1.35 !important;
+}
+
+.ant-notification .ant-notification-notice-description,
+.app-notify .ant-notification-notice-description {
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: rgba(100, 116, 139, 0.92) !important;
+  line-height: 1.5 !important;
+}
+
+.ant-notification .ant-notification-notice-icon,
+.app-notify .ant-notification-notice-icon {
+  font-size: 20px !important;
+  margin-inline-end: 12px !important;
+}
+
+.app-notify-success.ant-notification-notice,
+.ant-notification-notice-success {
+  border-color: rgba(82, 196, 26, 0.28) !important;
+  background:
+    radial-gradient(90% 70% at 0% 0%, rgba(82, 196, 26, 0.16), transparent 55%),
+    linear-gradient(155deg, #f6ffed 0%, #ffffff 48%, #f0ffe6 100%) !important;
+}
+
+.app-notify-success .ant-notification-notice-icon,
+.ant-notification-notice-success .ant-notification-notice-icon {
+  color: #52c41a !important;
+}
+
+.app-notify-error.ant-notification-notice,
+.ant-notification-notice-error {
+  border-color: rgba(255, 77, 79, 0.28) !important;
+  background:
+    radial-gradient(90% 70% at 0% 0%, rgba(255, 77, 79, 0.14), transparent 55%),
+    linear-gradient(155deg, #fff2f0 0%, #ffffff 48%, #fff1f0 100%) !important;
+}
+
+.app-notify-error .ant-notification-notice-icon,
+.ant-notification-notice-error .ant-notification-notice-icon {
+  color: #ff4d4f !important;
+}
+
+.app-notify-warning.ant-notification-notice,
+.ant-notification-notice-warning {
+  border-color: rgba(250, 173, 20, 0.32) !important;
+  background:
+    radial-gradient(90% 70% at 0% 0%, rgba(250, 173, 20, 0.16), transparent 55%),
+    linear-gradient(155deg, #fffbe6 0%, #ffffff 48%, #fff7e6 100%) !important;
+}
+
+.app-notify-warning .ant-notification-notice-icon,
+.ant-notification-notice-warning .ant-notification-notice-icon {
+  color: #faad14 !important;
+}
+
+.app-notify-info.ant-notification-notice,
+.ant-notification-notice-info {
+  border-color: rgba(22, 119, 255, 0.28) !important;
+  background:
+    radial-gradient(90% 70% at 0% 0%, rgba(22, 119, 255, 0.14), transparent 55%),
+    linear-gradient(155deg, #e6f4ff 0%, #ffffff 48%, #f0f5ff 100%) !important;
+}
+
+.app-notify-info .ant-notification-notice-icon,
+.ant-notification-notice-info .ant-notification-notice-icon {
+  color: #1677ff !important;
+}
+
+html[theme='dark'] .ant-notification .ant-notification-notice,
+html[theme='dark'] .app-notify.ant-notification-notice {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.06) inset,
+    0 18px 40px rgba(0, 0, 0, 0.45) !important;
+}
+
+html[theme='dark'] .ant-notification .ant-notification-notice-message,
+html[theme='dark'] .app-notify .ant-notification-notice-message {
+  color: rgba(236, 240, 248, 0.94) !important;
+}
+
+html[theme='dark'] .ant-notification .ant-notification-notice-description,
+html[theme='dark'] .app-notify .ant-notification-notice-description {
+  color: rgba(148, 163, 184, 0.9) !important;
+}
+
+html[theme='dark'] .app-notify-success.ant-notification-notice,
+html[theme='dark'] .ant-notification-notice-success {
+  border-color: rgba(82, 196, 26, 0.35) !important;
+  background:
+    radial-gradient(90% 70% at 0% 0%, rgba(82, 196, 26, 0.18), transparent 55%),
+    linear-gradient(155deg, #162016 0%, #14161f 55%, #121812 100%) !important;
+}
+
+html[theme='dark'] .app-notify-error.ant-notification-notice,
+html[theme='dark'] .ant-notification-notice-error {
+  border-color: rgba(255, 77, 79, 0.35) !important;
+  background:
+    radial-gradient(90% 70% at 0% 0%, rgba(255, 77, 79, 0.16), transparent 55%),
+    linear-gradient(155deg, #241618 0%, #14161f 55%, #1c1416 100%) !important;
+}
+
+html[theme='dark'] .app-notify-warning.ant-notification-notice,
+html[theme='dark'] .ant-notification-notice-warning {
+  border-color: rgba(250, 173, 20, 0.35) !important;
+  background:
+    radial-gradient(90% 70% at 0% 0%, rgba(250, 173, 20, 0.16), transparent 55%),
+    linear-gradient(155deg, #241e12 0%, #14161f 55%, #1c1a14 100%) !important;
+}
+
+html[theme='dark'] .app-notify-info.ant-notification-notice,
+html[theme='dark'] .ant-notification-notice-info {
+  border-color: rgba(91, 157, 255, 0.35) !important;
+  background:
+    radial-gradient(90% 70% at 0% 0%, rgba(91, 157, 255, 0.18), transparent 55%),
+    linear-gradient(155deg, #161c28 0%, #14161f 55%, #12161f 100%) !important;
+}
+
+/* H5：弹层宽度与安全区 */
+@media (max-width: 767px) {
+  .ant-modal {
+    max-width: calc(100vw - 24px) !important;
+    margin: 12px auto !important;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .ant-modal .ant-modal-content {
+    border-radius: 16px;
+  }
+
+  .ant-drawer-content-wrapper {
+    max-width: 100vw !important;
+  }
+
+  .ant-notification {
+    margin-right: 12px !important;
+  }
+
+  .ant-notification-notice {
+    width: calc(100vw - 24px) !important;
+    max-width: 360px;
+  }
 }

@@ -1,14 +1,15 @@
 @use "variable" as *;
 
 @mixin app-tokens-light {
-  --app-font-family: '华文楷体', 'STKaiti', 'Kaiti SC', 'KaiTi', '楷体', #{$font-family};
-  --app-ink: rgba(15, 23, 42, 0.92);
-  --app-muted: rgba(15, 23, 42, 0.55);
-  --app-faint: rgba(15, 23, 42, 0.42);
+  --app-font-family: #{$font-family};
+  /* 仿宋/楷体下纯黑偏沉，主墨略提亮 */
+  --app-ink: rgba(71, 85, 105, 0.9);
+  --app-muted: rgba(100, 116, 139, 0.72);
+  --app-faint: rgba(148, 163, 184, 0.78);
   --app-accent: #1677ff;
   --app-accent-2: #04befe;
   --app-accent-deep: #6253e1;
-  --app-line: rgb(177 185 203 / 8%);
+  --app-line: rgba(15, 23, 42, 0.08);
   --app-line-strong: rgba(22, 119, 255, 0.28);
   --app-surface: rgba(255, 255, 255, 0.72);
   --app-surface-solid: #ffffff;
@@ -25,6 +26,8 @@
   --app-grad-bar: linear-gradient(180deg, #6253e1, #1677ff, #04befe);
   --app-brand-grad: linear-gradient(120deg, #0f172a 10%, #1677ff 70%, #04befe 120%);
   --app-panel-bg: rgba(255, 255, 255, 0.78);
+  /* 兼容历史写法 var(--app-panel)，与 panel-bg 同义；缺省会回退成 #fff 导致暗色白卡片 */
+  --app-panel: var(--app-panel-bg);
   --app-panel-border: rgba(255, 255, 255, 0.85);
   --app-header-bg: rgba(255, 255, 255, 0.35);
   /* 默认态：原 hover 的白卡片观感 */
@@ -55,7 +58,7 @@
 }
 
 @mixin app-tokens-dark {
-  --app-font-family: '华文楷体', 'STKaiti', 'Kaiti SC', 'KaiTi', '楷体', #{$font-family};
+  --app-font-family: #{$font-family};
   --app-ink: rgba(236, 240, 248, 0.94);
   --app-muted: rgba(168, 178, 198, 0.68);
   --app-faint: rgba(130, 140, 162, 0.5);
@@ -81,6 +84,7 @@
   --app-grad-bar: linear-gradient(180deg, #1677ff, #5b9dff, #ff6b6d);
   --app-brand-grad: linear-gradient(120deg, #eef3ff 8%, #5b9dff 52%, #ff6b6d 120%);
   --app-panel-bg: rgba(16, 18, 26, 0.92);
+  --app-panel: var(--app-panel-bg);
   --app-panel-border: rgba(255, 255, 255, 0.08);
   --app-header-bg: rgba(8, 9, 14, 0.72);
   /* 默认菜单：深色玻璃，对比靠 hover/active 提亮 */
@@ -117,7 +121,6 @@
 @mixin default {
   @include app-tokens-light;
 
-  --font-family: var(--app-font-family);
   --font-size: #{$font-size-14};
   --text-color: var(--app-ink);
   --background-color: var(--app-shell-bg);
@@ -134,7 +137,6 @@
 @mixin theme-dark {
   @include app-tokens-dark;
 
-  --font-family: var(--app-font-family);
   --text-color: var(--app-ink);
   --background-color: var(--app-shell-bg);
   --content-background-color: var(--app-surface-solid);

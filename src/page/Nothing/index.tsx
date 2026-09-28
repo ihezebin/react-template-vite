@@ -7,11 +7,11 @@ import { AmbientBg } from '../../components/AmbientBg'
 
 import styles from './index.module.scss'
 
-const Nothing = () => {
+const Nothing = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   const navigate = useNavigate()
 
   return (
-    <div className={styles.statusPage}>
+    <div className={classNames(styles.statusPage, fullscreen && styles.statusPageFullscreen)}>
       <AmbientBg variant="page" />
       <div className={styles.statusPanel}>
         <div className={styles.statusCode} aria-hidden>

@@ -31,7 +31,8 @@ $font-size-15: 15px;
 $font-size-16: 16px;
 
 // 字体样式
-$font-family: 'Kaiti SC', 'Songti SC', 'PingFang SC', cursive, sans-serif;
+// 默认小赖字体；唯一字体变量 --app-font-family，运行时由 appFont.ts 覆盖
+$font-family: 'Xiaolai SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
 
 // 功能颜色
 $background-color-white: #fff;
@@ -41,11 +42,11 @@ $background-color-lightgray-reverse: #181c27;
 $background-color-lightgray-reverse-lighter: #1f3144;
 $link-hover-color-blue: #30a9de;
 $link-hover-color-green: #73d13d;
-$title-color: #3c4858;
+$title-color: #475569;
 $title-color-reverse: #c4c6c9;
-$subtitle-color: #718096;
+$subtitle-color: #64748b;
 $subtitle-color-reverse: #c4c6c9;
-$text-color: #2c3e50;
+$text-color: #475569;
 $text-color-reverse: #a7a9ad;
 $text-color-reverse-lighter: #d0d0d0;
 

@@ -8,7 +8,6 @@ import {
   SunOutlined,
 } from '@ant-design/icons'
 import { Avatar, Button, Dropdown, Popover, Typography } from 'antd'
-import type { MenuProps } from 'antd'
 import classNames from 'classnames'
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -16,6 +15,9 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { AmbientBg } from '../../components/AmbientBg'
 import { appConfig } from '../../config'
 import { useStore } from '../../store'
+import { buildUserMenuItem, type UserMenuAction } from '../_shared/buildUserMenuItem'
+import { UserAccountPanel } from '../_shared/UserAccountPanel'
+import userMenuStyles from '../_shared/userMenu.module.scss'
 
 import { menuConfig, type LayoutMenuItem } from './menu.config'
 import styles from './styles.module.scss'
@@ -33,7 +35,8 @@ function BrandBar({ collapsed }: { collapsed: boolean }) {
         className={styles.sidebarBrandLeft}
         aria-label="返回首页"
         title="返回首页"
-        onClick={() => navigate('/')}>
+        onClick={() => navigate('/')}
+      >
         <img className={styles.sidebarLogo} src="/logo.svg" alt="" />
         {!collapsed ? <span className={styles.sidebarBrandName}>{appConfig.title}</span> : null}
       </button>
@@ -54,7 +57,7 @@ function BrandBar({ collapsed }: { collapsed: boolean }) {
 }
 
 function buildPath(parentKeys: string[], key: string) {
-  return ('/' + [...parentKeys, key].join('/')).replace(/\/+/g, '/')
+  return ('/console/' + [...parentKeys, key].join('/')).replace(/\/+/g, '/')
 }
 
 function isPathActive(pathname: string, path: string) {
@@ -78,7 +81,8 @@ function MenuLeaf({
       className={classNames(styles.settingsNavItem, active && styles.active)}
       onClick={() => onNavigate(path)}
       title={item.label}
-      aria-label={item.label}>
+      aria-label={item.label}
+    >
       {item.icon ? <span className={styles.settingsNavIcon}>{item.icon}</span> : null}
       <span className={styles.settingsNavLabel}>{item.label}</span>
     </button>
@@ -103,7 +107,8 @@ function MenuGroupChildren({
       className={classNames(
         styles.sidebarMenuGroupChildren,
         !indented && styles.sidebarMenuGroupChildrenFlat,
-      )}>
+      )}
+    >
       {(item.children ?? []).map((child) => {
         const path = buildPath([...parentKeys, item.key], child.key)
         return (
@@ -114,7 +119,8 @@ function MenuGroupChildren({
               styles.projectItem,
               isPathActive(pathname, path) && styles.active,
             )}
-            onClick={() => onNavigate(path)}>
+            onClick={() => onNavigate(path)}
+          >
             <span className={styles.projectItemName} title={child.label}>
               {child.label}
             </span>
@@ -178,7 +184,8 @@ function MenuGroup({
               }}
             />
           </div>
-        }>
+        }
+      >
         <button
           type="button"
           className={classNames(
@@ -190,7 +197,8 @@ function MenuGroup({
           title={item.label}
           aria-label={item.label}
           aria-haspopup="dialog"
-          aria-expanded={popupOpen}>
+          aria-expanded={popupOpen}
+        >
           {item.icon ? <span className={styles.settingsNavIcon}>{item.icon}</span> : null}
           <span className={styles.settingsNavLabel}>{item.label}</span>
         </button>
@@ -208,7 +216,8 @@ function MenuGroup({
           childActive && styles.isActiveGroup,
         )}
         onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}>
+        aria-expanded={open}
+      >
         {item.icon ? <span className={styles.settingsNavIcon}>{item.icon}</span> : null}
         <span className={styles.settingsNavLabel}>{item.label}</span>
         <span className={styles.sidebarMenuGroupArrow}>
@@ -269,34 +278,50 @@ function UserFooter({ collapsed }: { collapsed: boolean }) {
   const setSidebarCollapsed = useStore((s) => s.setSidebarCollapsed)
   const name = user?.username || '访客'
   const initial = name.slice(0, 1).toUpperCase()
-
-  const items: MenuProps['items'] = [
-    {
+  const [menuOpen, setMenuOpen] = useState(false)
+  const actions: UserMenuAction[] = [
+    buildUserMenuItem({
       key: 'theme',
       icon: themeDark ? <SunOutlined /> : <MoonOutlined />,
-      label: themeDark ? '切换明亮主题' : '切换暗黑主题',
+      title: themeDark ? '切换明亮主题' : '切换暗黑主题',
+      hint: themeDark ? '当前：暗黑' : '当前：明亮',
       onClick: () => setThemeDark(!themeDark),
-    },
-    {
+    }),
+    buildUserMenuItem({
       key: 'logout',
       icon: <LogoutOutlined />,
-      label: '退出登录',
+      title: '退出登录',
+      hint: '结束当前会话',
       danger: true,
       onClick: () => {
         logout()
         navigate('/login', { replace: true })
       },
-    },
+    }),
   ]
 
   return (
     <div className={styles.sidebarFooterStack}>
-      <Dropdown menu={{ items }} trigger={['click']} placement={collapsed ? 'topLeft' : 'topRight'}>
+      <Dropdown
+        open={menuOpen}
+        onOpenChange={setMenuOpen}
+        trigger={['click']}
+        placement={collapsed ? 'topLeft' : 'topRight'}
+        classNames={{ root: userMenuStyles.popup }}
+        dropdownRender={() => (
+          <UserAccountPanel
+            user={user}
+            actions={actions}
+            onAction={() => setMenuOpen(false)}
+          />
+        )}
+      >
         <button
           type="button"
           className={styles.sidebarUserBtn}
           title="账号菜单"
-          aria-label={`账号菜单：${name}`}>
+          aria-label={`账号菜单：${name}`}
+        >
           <Avatar className={styles.sidebarUserAvatar} size={36} src={user?.avatar}>
             {initial}
           </Avatar>
